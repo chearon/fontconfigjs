@@ -3,8 +3,11 @@
     "fontkit": "^1.8.0"
   },
   "name": "fontconfig",
-  "files": ["/lib.wasm", "/js/*"],
-  "version": "0.0.1",
+  "files": [
+    "/lib.wasm",
+    "/js/*"
+  ],
+  "version": "0.0.2",
   "description": "In-memory version of FontConfig in JS/WASM (no native dependencies)",
   "main": "js/node.js",
   "browser": "js/browser.js",
