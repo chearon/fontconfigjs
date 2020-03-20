@@ -13,22 +13,58 @@ FontConfig.addFont('/Library/Fonts/Comic Sans MS.ttf');
 FontConfig.addFont('/Library/Fonts/Futura.ttc');
 FontConfig.addFont('/Library/Fonts/GillSans.ttc');
 
-FontConfig.sort({family: "Gill Sans"});
+FontConfig.sort({
+  family: "Gill Sans",
+  weight: FontConfig.FC_WEIGHT_LIGHT
+});
 
 // returns this:
 [
-  { file: '/Library/Fonts/GillSans.ttc', index: 2 },
   { file: '/Library/Fonts/GillSans.ttc', index: 7 },
   { file: '/Library/Fonts/GillSans.ttc', index: 6 },
-  { file: '/Library/Fonts/Futura.ttc', index: 4 },
-  { file: '/Library/Fonts/Futura.ttc', index: 2 },
-  { file: '/Library/Fonts/Comic Sans MS.ttf', index: 0 }
+  { file: '/Library/Fonts/Comic Sans MS.ttf', index: 0 },
+  { file: '/Library/Fonts/Futura.ttc', index: 2 }
 ]
 ```
 
 Unlike the full FontConfig library, it does not read configuration files for font lookup rules or font search directories. The FontConfig APIs for adding fonts and querying fonts are exposed instead, which the Javascript wrapper makes calls to.
 
 Instead of using [FreeType](http://freetype.org) to read fonts, [fontkit](https://github.com/foliojs/fontkit) is used.
+
+## API
+
+### `FontConfig.sort()`
+
+Returns the best possible cascade list of fonts based on a description (with later fonts suited to use when previous fonts don't have proper coverage).
+
+The family object passed to `FontConfig.sort` looks like:
+
+- `family` (string) (required)
+- `weight` (number)
+
+For more details on the individual values, continue below.
+
+#### Weights
+
+- `FontConfig.FC_WEIGHT_THIN`
+- `FontConfig.FC_WEIGHT_EXTRALIGHT`
+- `FontConfig.FC_WEIGHT_ULTRALIGHT`
+- `FontConfig.FC_WEIGHT_LIGHT`
+- `FontConfig.FC_WEIGHT_DEMILIGHT`
+- `FontConfig.FC_WEIGHT_SEMILIGHT`
+- `FontConfig.FC_WEIGHT_BOOK`
+- `FontConfig.FC_WEIGHT_REGULAR`
+- `FontConfig.FC_WEIGHT_NORMAL`
+- `FontConfig.FC_WEIGHT_MEDIUM`
+- `FontConfig.FC_WEIGHT_DEMIBOLD`
+- `FontConfig.FC_WEIGHT_SEMIBOLD`
+- `FontConfig.FC_WEIGHT_BOLD`
+- `FontConfig.FC_WEIGHT_EXTRABOLD`
+- `FontConfig.FC_WEIGHT_ULTRABOLD`
+- `FontConfig.FC_WEIGHT_BLACK`
+- `FontConfig.FC_WEIGHT_HEAVY`
+- `FontConfig.FC_WEIGHT_EXTRABLACK`
+- `FontConfig.FC_WEIGHT_ULTRABLACK`
 
 ## Enabling debugging
 

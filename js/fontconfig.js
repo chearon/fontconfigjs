@@ -336,13 +336,21 @@ module.exports = function (wasm) {
     free(sfilename);
   }
 
-  function sort({family}) {
+  function sort(fontspec) {
     const pat = FcPatternCreate();
-    const familyPtr = smalloc(family);
     const matches = [];
 
+    if (typeof fontspec !== "object" || typeof fontspec.family !== "string") {
+      throw new Error("Pass an object with at least {family: string}");
+    }
+
+    const familyPtr = smalloc(fontspec.family);
     FcPatternObjectAddString(pat, FC_OBJECT_FAMILY, familyPtr);
     free(familyPtr);
+
+    if ("weight" in fontspec) {
+      FcPatternObjectAddDouble(pat, FC_OBJECT_WEIGHT, fontspec.weight);
+    }
 
     const setPtr = FcFontSort(cfg, pat, 1, 0 /* TODO pass/return CSP ptr */, u32p);
     const result = new Uint32Array(buf(), u32p, 1)[0];
@@ -375,5 +383,42 @@ module.exports = function (wasm) {
     return matches;
   }
 
-  return {addFont, sort};
+  return {
+    addFont,
+    sort,
+
+    FC_WEIGHT_THIN,
+    FC_WEIGHT_EXTRALIGHT,
+    FC_WEIGHT_ULTRALIGHT,
+    FC_WEIGHT_LIGHT,
+    FC_WEIGHT_DEMILIGHT,
+    FC_WEIGHT_SEMILIGHT,
+    FC_WEIGHT_BOOK,
+    FC_WEIGHT_REGULAR,
+    FC_WEIGHT_NORMAL,
+    FC_WEIGHT_MEDIUM,
+    FC_WEIGHT_DEMIBOLD,
+    FC_WEIGHT_SEMIBOLD,
+    FC_WEIGHT_BOLD,
+    FC_WEIGHT_EXTRABOLD,
+    FC_WEIGHT_ULTRABOLD,
+    FC_WEIGHT_BLACK,
+    FC_WEIGHT_HEAVY,
+    FC_WEIGHT_EXTRABLACK,
+    FC_WEIGHT_ULTRABLACK,
+
+    FC_SLANT_ROMAN,
+    FC_SLANT_ITALIC,
+    FC_SLANT_OBLIQUE,
+
+    FC_WIDTH_ULTRACONDENSED,
+    FC_WIDTH_EXTRACONDENSED,
+    FC_WIDTH_CONDENSED,
+    FC_WIDTH_SEMICONDENSED,
+    FC_WIDTH_NORMAL,
+    FC_WIDTH_SEMIEXPANDED,
+    FC_WIDTH_EXPANDED,
+    FC_WIDTH_EXTRAEXPANDED,
+    FC_WIDTH_ULTRAEXPANDED
+  };
 }
