@@ -30,6 +30,18 @@ Unlike the full FontConfig library, it does not read configuration files for fon
 
 Instead of using [FreeType](http://freetype.org) to read fonts, [fontkit](https://github.com/foliojs/fontkit) is used.
 
+## Enabling debugging
+
+Thanks to [WASI](https://wasi.dev), you can set the environment variable [`FC_DEBUG`](https://www.freedesktop.org/software/fontconfig/fontconfig-user.html)<sup>1</sup> just like regular font config. This will print information to stdout, but only if
+
+1. You built with `-DWASI_RUNTIME` (see below)
+2. You're using nodejs 13.3.0 or newer
+3. You run nodejs with `--experimental-wasi-unstable-preview1 --experimental-wasm-bigint`
+
+The WASM distributed in NPM is not built with debugging calls, though there are probably WASI runtimes available for web browsers.
+
+<sup>1</sup>As of node 13.10 this doesn't seem to be implemented yet, so you have to manually edit `src/fcdbg.c` until it's fixed.
+
 ## Building the C parts
 
 These instructions are for macOS, but they should be similar for Linux. The steps are familiar to anyone who has done cross-compilation before, but the first few are WebAssembly-specific.
