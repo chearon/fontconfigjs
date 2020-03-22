@@ -41,6 +41,8 @@ The pattern object passed to `FontConfig.sort` looks like:
 
 - `family` (string) (required)
 - `weight` (number)
+- `width` (number)
+- `slant` (number)
 
 For more details on the individual values, continue below.
 
@@ -65,6 +67,24 @@ For more details on the individual values, continue below.
 - `FontConfig.FC_WEIGHT_HEAVY`
 - `FontConfig.FC_WEIGHT_EXTRABLACK`
 - `FontConfig.FC_WEIGHT_ULTRABLACK`
+
+#### Widths
+
+- `FontConfig.FC_WIDTH_ULTRACONDENSED`
+- `FontConfig.FC_WIDTH_EXTRACONDENSED`
+- `FontConfig.FC_WIDTH_CONDENSED`
+- `FontConfig.FC_WIDTH_SEMICONDENSED`
+- `FontConfig.FC_WIDTH_NORMAL`
+- `FontConfig.FC_WIDTH_SEMIEXPANDED`
+- `FontConfig.FC_WIDTH_EXPANDED`
+- `FontConfig.FC_WIDTH_EXTRAEXPANDED`
+- `FontConfig.FC_WIDTH_ULTRAEXPANDED`
+
+#### Slants
+
+- `FontConfig.FC_SLANT_ROMAN`
+- `FontConfig.FC_SLANT_ITALIC`
+- `FontConfig.FC_SLANT_OBLIQUE`
 
 ## Enabling debugging
 

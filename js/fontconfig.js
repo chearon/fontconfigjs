@@ -352,6 +352,14 @@ module.exports = function (wasm) {
       FcPatternObjectAddDouble(pat, FC_OBJECT_WEIGHT, fontspec.weight);
     }
 
+    if ("width" in fontspec) {
+      FcPatternObjectAddInteger(pat, FC_OBJECT_WIDTH, fontspec.width);
+    }
+
+    if ("slant" in fontspec) {
+      FcPatternObjectAddInteger(pat, FC_OBJECT_SLANT, fontspec.slant);
+    }
+
     const setPtr = FcFontSort(cfg, pat, 1, 0 /* TODO pass/return CSP ptr */, u32p);
     const result = new Uint32Array(buf(), u32p, 1)[0];
 
