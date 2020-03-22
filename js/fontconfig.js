@@ -226,7 +226,16 @@ module.exports = function (wasm) {
 
   function addFont(filename) {
     const sfilename = smalloc(filename);
-    const raw = fontkit.openSync(filename);
+    let raw;
+
+    // Will throw if the file is invalid/unsupported/doesn't exist
+    try {
+      raw = fontkit.openSync(filename);
+    } catch (e) {
+      free(sfilename);
+      throw e;
+    }
+
     const jsfonts = raw.fonts ? raw.fonts : [raw];
 
     for (const [index, jsfont] of jsfonts.entries()) {
@@ -270,8 +279,16 @@ module.exports = function (wasm) {
 
       // Charset
       const cset = FcCharSetCreate();
-      for (const c of jsfont.characterSet) FcCharSetAddChar(cset, c);
-      FcPatternObjectAddCharSet(fnt, FC_OBJECT_CHARSET, cset);
+      let characterSet;
+
+      // Not all fonts have cmap, fontkit can throw an error here
+      try { characterSet = jsfont.characterSet; } catch (e) {}
+
+      if (characterSet) {
+        for (const c of jsfont.characterSet) FcCharSetAddChar(cset, c);
+        FcPatternObjectAddCharSet(fnt, FC_OBJECT_CHARSET, cset);
+      }
+
       FcCharSetDestroy(cset);
 
       // Lang - TODO support OS/2.codePageRange? 2nd arg to FcFreeTypeLangSet
@@ -358,6 +375,13 @@ module.exports = function (wasm) {
 
     if ("slant" in fontspec) {
       FcPatternObjectAddInteger(pat, FC_OBJECT_SLANT, fontspec.slant);
+    }
+
+    if ("coverage" in fontspec) {
+      const cset = FcCharSetCreate();
+      for (const c of fontspec.coverage) FcCharSetAddChar(cset, c);
+      FcPatternObjectAddCharSet(pat, FC_OBJECT_CHARSET, cset);
+      FcCharSetDestroy(cset);
     }
 
     const setPtr = FcFontSort(cfg, pat, 1, 0 /* TODO pass/return CSP ptr */, u32p);

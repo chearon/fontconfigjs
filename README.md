@@ -43,6 +43,7 @@ The pattern object passed to `FontConfig.sort` looks like:
 - `weight` (number)
 - `width` (number)
 - `slant` (number)
+- `coverage` (array<number>)
 
 For more details on the individual values, continue below.
 
@@ -85,6 +86,10 @@ For more details on the individual values, continue below.
 - `FontConfig.FC_SLANT_ROMAN`
 - `FontConfig.FC_SLANT_ITALIC`
 - `FontConfig.FC_SLANT_OBLIQUE`
+
+#### Unicode Coverage
+
+The `coverage` option is an array of unicode codepoints. For example, if you pass `{coverage: [0x1780]}`, a Khmer font will be at the top of the list.
 
 ## Enabling debugging
 
