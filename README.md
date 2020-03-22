@@ -14,7 +14,7 @@ FontConfig.addFont('/Library/Fonts/Futura.ttc');
 FontConfig.addFont('/Library/Fonts/GillSans.ttc');
 
 FontConfig.sort({
-  family: "Gill Sans",
+  family: 'Gill Sans',
   weight: FontConfig.FC_WEIGHT_LIGHT
 });
 
@@ -27,17 +27,17 @@ FontConfig.sort({
 ]
 ```
 
-Unlike the full FontConfig library, it does not read configuration files for font lookup rules or font search directories. The FontConfig APIs for adding fonts and querying fonts are exposed instead, which the Javascript wrapper makes calls to.
+Unlike the full FontConfig library, it does not read configuration files for font lookup rules or font search directories. The part of FontConfig for adding and querying fonts (the matching module) is exposed instead, which the Javascript wrapper makes calls to. At some point support for FontConfig [rules and aliases](https://www.freedesktop.org/software/fontconfig/fontconfig-user.html) (the configuration module) could be added. I don't expect it to be very useful since consumers of this library are typically adding and selecting fonts on their own, rather than users doing it.
 
 Instead of using [FreeType](http://freetype.org) to read fonts, [fontkit](https://github.com/foliojs/fontkit) is used.
 
 ## API
 
-### `FontConfig.sort()`
+### `FontConfig.sort(pattern)`
 
 Returns the best possible cascade list of fonts based on a description (with later fonts suited to use when previous fonts don't have proper coverage).
 
-The family object passed to `FontConfig.sort` looks like:
+The pattern object passed to `FontConfig.sort` looks like:
 
 - `family` (string) (required)
 - `weight` (number)
