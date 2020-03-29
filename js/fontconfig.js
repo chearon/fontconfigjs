@@ -196,6 +196,7 @@ module.exports = function (wasm) {
     FcCharSetAddChar,
     FcCharSetCreate,
     FcCharSetDestroy,
+    FcCharSetHasChar,
     FcFreeTypeLangSet, // TODO naming here... it doesn't use FT at all
     FcLangSetDestroy,
     FcWeightFromOpenTypeDouble,
@@ -203,6 +204,29 @@ module.exports = function (wasm) {
     free,
     memory
   } = wasm.instance.exports;
+
+  class Coverage {
+    constructor(cset) {
+      this.cset = cset;
+    }
+
+    done() {
+      this.isDone = true;
+      free(this.cset);
+    }
+
+    has(c) {
+      if (this.isDone) throw new Error('done() was called');
+      return FcCharSetHasChar(this.cset, c);
+    }
+  }
+
+  class Cascade {
+    constructor(matches, coverage) {
+      this.matches = matches;
+      this.coverage = coverage;
+    }
+  }
 
   FcInitDebug();
 
@@ -353,7 +377,7 @@ module.exports = function (wasm) {
     free(sfilename);
   }
 
-  function sort(fontspec) {
+  function sort(fontspec, options) {
     const pat = FcPatternCreate();
     const matches = [];
 
@@ -384,12 +408,13 @@ module.exports = function (wasm) {
       FcCharSetDestroy(cset);
     }
 
-    const setPtr = FcFontSort(cfg, pat, 1, 0 /* TODO pass/return CSP ptr */, u32p);
+    const cspPtr = options.coverage ? malloc(4) : 0;
+    const set = FcFontSort(cfg, pat, 1, cspPtr, u32p);
     const result = new Uint32Array(buf(), u32p, 1)[0];
 
     if (result !== FcResultMatch) throw new Error("FcResult: " + result);
 
-    const [nfont,, fontsPtrPtr] = new Uint32Array(buf(), setPtr, 3);
+    const [nfont,, fontsPtrPtr] = new Uint32Array(buf(), set, 3);
 
     for (let i = 0; i < nfont; ++i) {
       const fontsPtr = new Uint32Array(buf(), fontsPtrPtr + i * 4, 1)[0];
@@ -410,9 +435,12 @@ module.exports = function (wasm) {
       }
     }
 
-    FcFontSetDestroy(setPtr);
+    const csp = cspPtr ? new Uint32Array(buf(), cspPtr, 1)[0] : 0;
+    if (cspPtr) free(cspPtr);
 
-    return matches;
+    FcFontSetDestroy(set);
+
+    return new Cascade(matches, csp ? new Coverage(csp) : null);
   }
 
   return {
