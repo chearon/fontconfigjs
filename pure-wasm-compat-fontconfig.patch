@@ -2597,7 +2597,7 @@ index 9e1da1e..c310f58 100644
  #define FcPrivate		__hidden
  #else /* not gcc >= 3.3 and not Sun Studio >= 8 */
 diff --git a/src/fclang.c b/src/fclang.c
-index 687e2a7..0e5aa73 100644
+index 687e2a7..123a001 100644
 --- a/src/fclang.c
 +++ b/src/fclang.c
 @@ -23,7 +23,6 @@
@@ -2678,11 +2678,13 @@ index 687e2a7..0e5aa73 100644
          if (FcDebug() & FC_DBG_SCANV)
  	{
  	    if (missing && missing < 10)
-@@ -169,10 +203,13 @@ FcFreeTypeLangSet (const FcCharSet  *charset,
+@@ -167,12 +201,15 @@ FcFreeTypeLangSet (const FcCharSet  *charset,
+ 	    else
+ 		printf ("%s(%u) ", fcLangCharSets[i].lang, missing);
  	}
++#endif
  	if (!missing)
  	    FcLangSetBitSet (ls, i);
-+#endif
      }
  
 +#ifdef WASI_RUNTIME

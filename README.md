@@ -43,6 +43,7 @@ The pattern object passed to `FontConfig.sort` looks like:
 - `weight` (number)
 - `width` (number)
 - `slant` (number)
+- `lang`  (string|array<string>)
 - `coverage` (array<number>)
 
 For more details on the individual values, continue below.
@@ -86,6 +87,10 @@ For more details on the individual values, continue below.
 - `FontConfig.FC_SLANT_ROMAN`
 - `FontConfig.FC_SLANT_ITALIC`
 - `FontConfig.FC_SLANT_OBLIQUE`
+
+#### Languages
+
+An [RFC3366](https://tools.ietf.org/html/rfc3066) language tag such as `"en"` or `"zh-tw"`
 
 #### Unicode Coverage
 

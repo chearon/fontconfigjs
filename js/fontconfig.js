@@ -175,6 +175,16 @@ function containsDecorative(s) {
   return false;
 }
 
+// returns the 4 Han languages FontConfig looks for
+// (search for exclusiveLang in src/freetype.c to find equivalent code)
+function getExclusiveLang([codePageRange1]) {
+  const bits17to20 = codePageRange1 & 0x1E0000;
+  if (codePageRange1 & 1 << 17 === bits17to20) return "ja";
+  if (codePageRange1 & 1 << 18 === bits17to20) return "zh-cn";
+  if (codePageRange1 & 1 << 19 === bits17to20) return "ko";
+  if (codePageRange1 & 1 << 20 === bits17to20) return "zh-tw";
+}
+
 module.exports = function (wasm) {
   const {
     FcConfigCreate,
@@ -197,8 +207,10 @@ module.exports = function (wasm) {
     FcCharSetCreate,
     FcCharSetDestroy,
     FcCharSetHasChar,
-    FcFreeTypeLangSet, // TODO naming here... it doesn't use FT at all
+    FcLangSetCreate,
+    FcLangSetAdd,
     FcLangSetDestroy,
+    FcFreeTypeLangSet, // TODO naming here... it doesn't use FT at all
     FcWeightFromOpenTypeDouble,
     malloc,
     free,
@@ -313,12 +325,15 @@ module.exports = function (wasm) {
         FcPatternObjectAddCharSet(fnt, FC_OBJECT_CHARSET, cset);
       }
 
-      FcCharSetDestroy(cset);
 
-      // Lang - TODO support OS/2.codePageRange? 2nd arg to FcFreeTypeLangSet
-      const lset = FcFreeTypeLangSet(cset, 0);
+      // Langset
+      const exclusiveLang = getExclusiveLang(jsfont['OS/2'].codePageRange);
+      const exclusiveLangPtr = exclusiveLang ? smalloc(exclusiveLang) : 0;
+      const lset = FcFreeTypeLangSet(cset, exclusiveLangPtr);
       FcPatternObjectAddLangSet(fnt, FC_OBJECT_LANG, lset);
       FcLangSetDestroy(lset);
+      FcCharSetDestroy(cset);
+      if (exclusiveLangPtr) free(exclusiveLangPtr);
 
       // Weight, width from tables
       let weight = FcWeightFromOpenTypeDouble(jsfont['OS/2'].usWeightClass);
@@ -406,6 +421,25 @@ module.exports = function (wasm) {
       for (const c of fontspec.coverage) FcCharSetAddChar(cset, c);
       FcPatternObjectAddCharSet(pat, FC_OBJECT_CHARSET, cset);
       FcCharSetDestroy(cset);
+    }
+
+    if ("lang" in fontspec) {
+      const lset = FcLangSetCreate();
+
+      if (Array.isArray(fontspec.lang)) {
+        for (const lang of fontspec.lang) {
+          const langPtr = smalloc(lang);
+          FcLangSetAdd(lset, langPtr);
+          free(langPtr);
+        }
+      } else {
+        const langPtr = smalloc(fontspec.lang);
+        FcLangSetAdd(lset, langPtr);
+        free(langPtr);
+      }
+
+      FcPatternObjectAddLangSet(pat, FC_OBJECT_LANG, lset);
+      FcLangSetDestroy(lset);
     }
 
     const cspPtr = options.coverage ? malloc(4) : 0;
