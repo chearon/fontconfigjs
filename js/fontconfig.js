@@ -7,57 +7,57 @@ const FcResultTypeMismatch = 2;
 const FcResultNoId = 3;
 const FcResultOutOfMemory = 4;
 
-const FC_OBJECT_FAMILY          = 1;
-const FC_OBJECT_FAMILYLANG      = 2;
-const FC_OBJECT_STYLE           = 3;
-const FC_OBJECT_STYLELANG       = 4;
-const FC_OBJECT_FULLNAME        = 5;
-const FC_OBJECT_FULLNAMELANG    = 6;
-const FC_OBJECT_SLANT           = 7;
-const FC_OBJECT_WEIGHT          = 8;
-const FC_OBJECT_WIDTH           = 9;
-const FC_OBJECT_SIZE            = 10;
-const FC_OBJECT_ASPECT          = 11;
-const FC_OBJECT_PIXEL_SIZE      = 12;
-const FC_OBJECT_SPACING         = 13;
-const FC_OBJECT_FOUNDRY         = 14;
-const FC_OBJECT_ANTIALIAS       = 15;
-const FC_OBJECT_HINT_STYLE      = 16;
-const FC_OBJECT_HINTING         = 17;
-const FC_OBJECT_VERTICAL_LAYOUT = 18;
-const FC_OBJECT_AUTOHINT        = 19;
-const FC_OBJECT_GLOBAL_ADVANCE  = 20;
-const FC_OBJECT_FILE            = 21;
-const FC_OBJECT_INDEX           = 22;
-const FC_OBJECT_RASTERIZER      = 23;
-const FC_OBJECT_OUTLINE         = 24;
-const FC_OBJECT_SCALABLE        = 25;
-const FC_OBJECT_DPI             = 26;
-const FC_OBJECT_RGBA            = 27;
-const FC_OBJECT_SCALE           = 28;
-const FC_OBJECT_MINSPACE        = 29;
-const FC_OBJECT_CHARWIDTH       = 30;
-const FC_OBJECT_CHAR_HEIGHT     = 31;
-const FC_OBJECT_MATRIX          = 32;
-const FC_OBJECT_CHARSET         = 33;
-const FC_OBJECT_LANG            = 34;
-const FC_OBJECT_FONTVERSION     = 35;
-const FC_OBJECT_CAPABILITY      = 36;
-const FC_OBJECT_FONTFORMAT      = 37;
-const FC_OBJECT_EMBOLDEN        = 38;
-const FC_OBJECT_EMBEDDED_BITMAP = 39;
-const FC_OBJECT_DECORATIVE      = 40;
-const FC_OBJECT_LCD_FILTER      = 41;
-const FC_OBJECT_NAMELANG        = 42;
-const FC_OBJECT_FONT_FEATURES   = 43;
-const FC_OBJECT_PRGNAME         = 44;
-const FC_OBJECT_HASH            = 45;
-const FC_OBJECT_POSTSCRIPT_NAME = 46;
-const FC_OBJECT_COLOR           = 47;
-const FC_OBJECT_SYMBOL          = 48;
-const FC_OBJECT_FONT_VARIATIONS = 49;
-const FC_OBJECT_VARIABLE        = 50;
-const FC_OBJECT_FONT_HAS_HINT   = 51;
+const FC_FAMILY_OBJECT          = 1;
+const FC_FAMILYLANG_OBJECT      = 2;
+const FC_STYLE_OBJECT           = 3;
+const FC_STYLELANG_OBJECT       = 4;
+const FC_FULLNAME_OBJECT        = 5;
+const FC_FULLNAMELANG_OBJECT    = 6;
+const FC_SLANT_OBJECT           = 7;
+const FC_WEIGHT_OBJECT          = 8;
+const FC_WIDTH_OBJECT           = 9;
+const FC_SIZE_OBJECT            = 10;
+const FC_ASPECT_OBJECT          = 11;
+const FC_PIXEL_OBJECT_SIZE      = 12;
+const FC_SPACING_OBJECT         = 13;
+const FC_FOUNDRY_OBJECT         = 14;
+const FC_ANTIALIAS_OBJECT       = 15;
+const FC_HINT_OBJECT_STYLE      = 16;
+const FC_HINTING_OBJECT         = 17;
+const FC_VERTICAL_OBJECT_LAYOUT = 18;
+const FC_AUTOHINT_OBJECT        = 19;
+const FC_GLOBAL_OBJECT_ADVANCE  = 20;
+const FC_FILE_OBJECT            = 21;
+const FC_INDEX_OBJECT           = 22;
+const FC_RASTERIZER_OBJECT      = 23;
+const FC_OUTLINE_OBJECT         = 24;
+const FC_SCALABLE_OBJECT        = 25;
+const FC_DPI_OBJECT             = 26;
+const FC_RGBA_OBJECT            = 27;
+const FC_SCALE_OBJECT           = 28;
+const FC_MINSPACE_OBJECT        = 29;
+const FC_CHARWIDTH_OBJECT       = 30;
+const FC_CHAR_OBJECT_HEIGHT     = 31;
+const FC_MATRIX_OBJECT          = 32;
+const FC_CHARSET_OBJECT         = 33;
+const FC_LANG_OBJECT            = 34;
+const FC_FONTVERSION_OBJECT     = 35;
+const FC_CAPABILITY_OBJECT      = 36;
+const FC_FONTFORMAT_OBJECT      = 37;
+const FC_EMBOLDEN_OBJECT        = 38;
+const FC_EMBEDDED_OBJECT_BITMAP = 39;
+const FC_DECORATIVE_OBJECT      = 40;
+const FC_LCD_OBJECT_FILTER      = 41;
+const FC_NAMELANG_OBJECT        = 42;
+const FC_FONT_OBJECT_FEATURES   = 43;
+const FC_PRGNAME_OBJECT         = 44;
+const FC_HASH_OBJECT            = 45;
+const FC_POSTSCRIPT_OBJECT_NAME = 46;
+const FC_COLOR_OBJECT           = 47;
+const FC_SYMBOL_OBJECT          = 48;
+const FC_FONT_OBJECT_VARIATIONS = 49;
+const FC_VARIABLE_OBJECT        = 50;
+const FC_FONT_OBJECT_HAS_HINT   = 51;
 
 const Os2WidthToFcWidth = {
   1: FcConstants.FC_WIDTH_ULTRACONDENSED,
@@ -253,8 +253,8 @@ module.exports = function (wasm) {
           for (const [lang, text] of Object.entries(jsfont.name.records.fontFamily)) {
             const pt = smalloc(text.toString());
             const pl = smalloc(lang.toString());
-            FcPatternObjectAddString(fnt, FC_OBJECT_FAMILY, pt);
-            FcPatternObjectAddString(fnt, FC_OBJECT_FAMILYLANG, pl);
+            FcPatternObjectAddString(fnt, FC_FAMILY_OBJECT, pt);
+            FcPatternObjectAddString(fnt, FC_FAMILYLANG_OBJECT, pl);
             free(pt);
             free(pl);
           }
@@ -265,8 +265,8 @@ module.exports = function (wasm) {
           for (const [lang, text] of Object.entries(jsfont.name.records.fullName)) {
             const pt = smalloc(text.toString());
             const pl = smalloc(lang.toString());
-            FcPatternObjectAddString(fnt, FC_OBJECT_FULLNAME, pt);
-            FcPatternObjectAddString(fnt, FC_OBJECT_FULLNAMELANG, pl);
+            FcPatternObjectAddString(fnt, FC_FULLNAME_OBJECT, pt);
+            FcPatternObjectAddString(fnt, FC_FULLNAMELANG_OBJECT, pl);
             free(pt);
             free(pl);
           }
@@ -277,8 +277,8 @@ module.exports = function (wasm) {
           for (const [lang, text] of Object.entries(jsfont.name.records.fontSubfamily)) {
             const pt = smalloc(text.toString());
             const pl = smalloc(lang.toString());
-            FcPatternObjectAddString(fnt, FC_OBJECT_STYLE, pt);
-            FcPatternObjectAddString(fnt, FC_OBJECT_STYLELANG, pl);
+            FcPatternObjectAddString(fnt, FC_STYLE_OBJECT, pt);
+            FcPatternObjectAddString(fnt, FC_STYLELANG_OBJECT, pl);
             free(pt);
             free(pl);
           }
@@ -293,14 +293,14 @@ module.exports = function (wasm) {
 
         if (characterSet) {
           for (const c of jsfont.characterSet) FcCharSetAddChar(cset, c);
-          FcPatternObjectAddCharSet(fnt, FC_OBJECT_CHARSET, cset);
+          FcPatternObjectAddCharSet(fnt, FC_CHARSET_OBJECT, cset);
         }
 
         // Langset
         const exclusiveLang = getExclusiveLang(jsfont['OS/2'].codePageRange);
         const exclusiveLangPtr = exclusiveLang ? smalloc(exclusiveLang) : 0;
         const lset = FcFreeTypeLangSet(cset, exclusiveLangPtr);
-        FcPatternObjectAddLangSet(fnt, FC_OBJECT_LANG, lset);
+        FcPatternObjectAddLangSet(fnt, FC_LANG_OBJECT, lset);
         FcLangSetDestroy(lset);
         FcCharSetDestroy(cset);
         if (exclusiveLangPtr) free(exclusiveLangPtr);
@@ -311,7 +311,7 @@ module.exports = function (wasm) {
         let slant = -1;
         let decorative = false;
 
-        for (let i = 0; FcPatternObjectGetString(fnt, FC_OBJECT_STYLE, i, u32p) === FcResultMatch; ++i) {
+        for (let i = 0; FcPatternObjectGetString(fnt, FC_STYLE_OBJECT, i, u32p) === FcResultMatch; ++i) {
           const sptr = new Uint32Array(buf(), u32p, 1)[0];
           const sraw = new Uint8Array(buf(), sptr);
           const utf8 = new Uint8Array(buf(), sptr, sraw.indexOf(0));
@@ -346,12 +346,12 @@ module.exports = function (wasm) {
         // TODO if no fullname, use family name, style name
 
         // Apply
-        FcPatternObjectAddString(fnt, FC_OBJECT_FILE, sfilename);
-        FcPatternObjectAddDouble(fnt, FC_OBJECT_WEIGHT, weight);
-        FcPatternObjectAddDouble(fnt, FC_OBJECT_WIDTH, width);
-        FcPatternObjectAddDouble(fnt, FC_OBJECT_SLANT, slant);
-        FcPatternObjectAddBool(fnt, FC_OBJECT_DECORATIVE, decorative);
-        FcPatternObjectAddInteger(fnt, FC_OBJECT_INDEX, index);
+        FcPatternObjectAddString(fnt, FC_FILE_OBJECT, sfilename);
+        FcPatternObjectAddDouble(fnt, FC_WEIGHT_OBJECT, weight);
+        FcPatternObjectAddDouble(fnt, FC_WIDTH_OBJECT, width);
+        FcPatternObjectAddDouble(fnt, FC_SLANT_OBJECT, slant);
+        FcPatternObjectAddBool(fnt, FC_DECORATIVE_OBJECT, decorative);
+        FcPatternObjectAddInteger(fnt, FC_INDEX_OBJECT, index);
 
         // Finish configuration and add the file
         FcConfigSubstitute(this._cfg, fnt, 0 /*FcMatchPattern*/);
@@ -371,25 +371,25 @@ module.exports = function (wasm) {
       }
 
       const familyPtr = smalloc(fontspec.family);
-      FcPatternObjectAddString(pat, FC_OBJECT_FAMILY, familyPtr);
+      FcPatternObjectAddString(pat, FC_FAMILY_OBJECT, familyPtr);
       free(familyPtr);
 
       if ('weight' in fontspec) {
-        FcPatternObjectAddDouble(pat, FC_OBJECT_WEIGHT, fontspec.weight);
+        FcPatternObjectAddDouble(pat, FC_WEIGHT_OBJECT, fontspec.weight);
       }
 
       if ('width' in fontspec) {
-        FcPatternObjectAddInteger(pat, FC_OBJECT_WIDTH, fontspec.width);
+        FcPatternObjectAddInteger(pat, FC_WIDTH_OBJECT, fontspec.width);
       }
 
       if ('slant' in fontspec) {
-        FcPatternObjectAddInteger(pat, FC_OBJECT_SLANT, fontspec.slant);
+        FcPatternObjectAddInteger(pat, FC_SLANT_OBJECT, fontspec.slant);
       }
 
       if ('coverage' in fontspec) {
         const cset = FcCharSetCreate();
         for (const c of fontspec.coverage) FcCharSetAddChar(cset, c);
-        FcPatternObjectAddCharSet(pat, FC_OBJECT_CHARSET, cset);
+        FcPatternObjectAddCharSet(pat, FC_CHARSET_OBJECT, cset);
         FcCharSetDestroy(cset);
       }
 
@@ -408,7 +408,7 @@ module.exports = function (wasm) {
           free(langPtr);
         }
 
-        FcPatternObjectAddLangSet(pat, FC_OBJECT_LANG, lset);
+        FcPatternObjectAddLangSet(pat, FC_LANG_OBJECT, lset);
         FcLangSetDestroy(lset);
       }
 
@@ -425,13 +425,13 @@ module.exports = function (wasm) {
 
       for (let i = 0; i < nfont; ++i) {
         const fontsPtr = new Uint32Array(buf(), fontsPtrPtr + i * 4, 1)[0];
-        if (FcPatternObjectGetString(fontsPtr, FC_OBJECT_FILE, 0, u32p) === FcResultMatch) {
+        if (FcPatternObjectGetString(fontsPtr, FC_FILE_OBJECT, 0, u32p) === FcResultMatch) {
           const filePtr = new Uint32Array(buf(), u32p, 1)[0];
           const unsized = new Uint8Array(buf(), filePtr);
           const utf8 = new Uint8Array(buf(), filePtr, unsized.indexOf(0));
           const file = new TextDecoder().decode(utf8);
 
-          if (FcPatternObjectGetInteger(fontsPtr, FC_OBJECT_INDEX, 0, u32p) === FcResultMatch) {
+          if (FcPatternObjectGetInteger(fontsPtr, FC_INDEX_OBJECT, 0, u32p) === FcResultMatch) {
             const index = new Uint32Array(buf(), u32p, 1)[0];
             matches.push({file, index});
           } else {
