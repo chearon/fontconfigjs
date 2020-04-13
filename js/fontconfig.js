@@ -179,10 +179,10 @@ function containsDecorative(s) {
 // (search for exclusiveLang in src/freetype.c to find equivalent code)
 function getExclusiveLang([codePageRange1]) {
   const bits17to20 = codePageRange1 & 0x1E0000;
-  if (codePageRange1 & 1 << 17 === bits17to20) return "ja";
-  if (codePageRange1 & 1 << 18 === bits17to20) return "zh-cn";
-  if (codePageRange1 & 1 << 19 === bits17to20) return "ko";
-  if (codePageRange1 & 1 << 20 === bits17to20) return "zh-tw";
+  if (codePageRange1 & 1 << 17 === bits17to20) return 'ja';
+  if (codePageRange1 & 1 << 18 === bits17to20) return 'zh-cn';
+  if (codePageRange1 & 1 << 19 === bits17to20) return 'ko';
+  if (codePageRange1 & 1 << 20 === bits17to20) return 'zh-tw';
 }
 
 module.exports = function (wasm) {
@@ -278,7 +278,7 @@ module.exports = function (wasm) {
       const fnt = FcPatternCreate();
 
       // Family
-      if ("fontFamily" in jsfont.name.records) {
+      if ('fontFamily' in jsfont.name.records) {
         for (const [lang, text] of Object.entries(jsfont.name.records.fontFamily)) {
           const pt = smalloc(text.toString());
           const pl = smalloc(lang.toString());
@@ -290,7 +290,7 @@ module.exports = function (wasm) {
       }
 
       // Fullname
-      if ("fullName" in jsfont.name.records) {
+      if ('fullName' in jsfont.name.records) {
         for (const [lang, text] of Object.entries(jsfont.name.records.fullName)) {
           const pt = smalloc(text.toString());
           const pl = smalloc(lang.toString());
@@ -302,7 +302,7 @@ module.exports = function (wasm) {
       }
 
       // Style
-      if ("fontSubfamily" in jsfont.name.records) {
+      if ('fontSubfamily' in jsfont.name.records) {
         for (const [lang, text] of Object.entries(jsfont.name.records.fontSubfamily)) {
           const pt = smalloc(text.toString());
           const pl = smalloc(lang.toString());
@@ -324,7 +324,6 @@ module.exports = function (wasm) {
         for (const c of jsfont.characterSet) FcCharSetAddChar(cset, c);
         FcPatternObjectAddCharSet(fnt, FC_OBJECT_CHARSET, cset);
       }
-
 
       // Langset
       const exclusiveLang = getExclusiveLang(jsfont['OS/2'].codePageRange);
@@ -396,34 +395,34 @@ module.exports = function (wasm) {
     const pat = FcPatternCreate();
     const matches = [];
 
-    if (typeof fontspec !== "object" || typeof fontspec.family !== "string") {
-      throw new Error("Pass an object with at least {family: string}");
+    if (typeof fontspec !== 'object' || typeof fontspec.family !== 'string') {
+      throw new Error('Pass an object with at least {family: string}');
     }
 
     const familyPtr = smalloc(fontspec.family);
     FcPatternObjectAddString(pat, FC_OBJECT_FAMILY, familyPtr);
     free(familyPtr);
 
-    if ("weight" in fontspec) {
+    if ('weight' in fontspec) {
       FcPatternObjectAddDouble(pat, FC_OBJECT_WEIGHT, fontspec.weight);
     }
 
-    if ("width" in fontspec) {
+    if ('width' in fontspec) {
       FcPatternObjectAddInteger(pat, FC_OBJECT_WIDTH, fontspec.width);
     }
 
-    if ("slant" in fontspec) {
+    if ('slant' in fontspec) {
       FcPatternObjectAddInteger(pat, FC_OBJECT_SLANT, fontspec.slant);
     }
 
-    if ("coverage" in fontspec) {
+    if ('coverage' in fontspec) {
       const cset = FcCharSetCreate();
       for (const c of fontspec.coverage) FcCharSetAddChar(cset, c);
       FcPatternObjectAddCharSet(pat, FC_OBJECT_CHARSET, cset);
       FcCharSetDestroy(cset);
     }
 
-    if ("lang" in fontspec) {
+    if ('lang' in fontspec) {
       const lset = FcLangSetCreate();
 
       if (Array.isArray(fontspec.lang)) {
@@ -446,7 +445,7 @@ module.exports = function (wasm) {
     const set = FcFontSort(cfg, pat, 1, cspPtr, u32p);
     const result = new Uint32Array(buf(), u32p, 1)[0];
 
-    if (result !== FcResultMatch) throw new Error("FcResult: " + result);
+    if (result !== FcResultMatch) throw new Error('FcResult: ' + result);
 
     const [nfont,, fontsPtrPtr] = new Uint32Array(buf(), set, 3);
 
@@ -462,10 +461,10 @@ module.exports = function (wasm) {
           const index = new Uint32Array(buf(), u32p, 1)[0];
           matches.push({file, index});
         } else {
-          throw new Error("Font without an index?");
+          throw new Error('Font without an index?');
         }
       } else {
-        throw new Error("Font without a filename?");
+        throw new Error('Font without a filename?');
       }
     }
 
