@@ -412,6 +412,9 @@ module.exports = function (wasm) {
         FcLangSetDestroy(lset);
       }
 
+      FcConfigSubstitute(this._cfg, pat, 1 /*FcMatchPattern*/);
+      FcDefaultSubstitute(pat);
+
       const cspPtr = options.coverage ? malloc(4) : 0;
       const set = FcFontSort(this._cfg, pat, 1, cspPtr, u32p);
       const result = new Uint32Array(buf(), u32p, 1)[0];
