@@ -8,12 +8,13 @@ The FontConfig source tree is mostly intact for ease of merging with future vers
 
 ```javascript
 const FontConfig = await require('fontconfig');
+const cfg = new FontConfig();
 
-FontConfig.addFont('/Library/Fonts/Comic Sans MS.ttf');
-FontConfig.addFont('/Library/Fonts/Futura.ttc');
-FontConfig.addFont('/Library/Fonts/GillSans.ttc');
+cfg.addFont('/Library/Fonts/Comic Sans MS.ttf');
+cfg.addFont('/Library/Fonts/Futura.ttc');
+cfg.addFont('/Library/Fonts/GillSans.ttc');
 
-FontConfig.sort({
+cfg.sort({
   family: 'Gill Sans',
   weight: FontConfig.FC_WEIGHT_LIGHT
 });
@@ -37,7 +38,7 @@ Instead of using [FreeType](http://freetype.org) to read fonts, [fontkit](https:
 
 Returns the best possible cascade list of fonts based on a description (with later fonts suited to use when previous fonts don't have proper coverage).
 
-The pattern object passed to `FontConfig.sort` looks like:
+The pattern object passed to `FontConfig.prototype.sort` looks like:
 
 - `family` (string) (required)
 - `weight` (number)

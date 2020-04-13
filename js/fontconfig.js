@@ -1,38 +1,11 @@
 const fontkit = require('fontkit');
+const FcConstants = require('./constants');
 
-const FC_WEIGHT_THIN        = 0;
-const FC_WEIGHT_EXTRALIGHT  = 40;
-const FC_WEIGHT_ULTRALIGHT  = FC_WEIGHT_EXTRALIGHT;
-const FC_WEIGHT_LIGHT       = 50;
-const FC_WEIGHT_DEMILIGHT   = 55;
-const FC_WEIGHT_SEMILIGHT   = FC_WEIGHT_DEMILIGHT;
-const FC_WEIGHT_BOOK        = 75;
-const FC_WEIGHT_REGULAR     = 80;
-const FC_WEIGHT_NORMAL      = FC_WEIGHT_REGULAR;
-const FC_WEIGHT_MEDIUM      = 100;
-const FC_WEIGHT_DEMIBOLD    = 180;
-const FC_WEIGHT_SEMIBOLD    = FC_WEIGHT_DEMIBOLD;
-const FC_WEIGHT_BOLD        = 200;
-const FC_WEIGHT_EXTRABOLD   = 205;
-const FC_WEIGHT_ULTRABOLD   = FC_WEIGHT_EXTRABOLD;
-const FC_WEIGHT_BLACK       = 210;
-const FC_WEIGHT_HEAVY       = FC_WEIGHT_BLACK;
-const FC_WEIGHT_EXTRABLACK  = 215;
-const FC_WEIGHT_ULTRABLACK  = FC_WEIGHT_EXTRABLACK;
-
-const FC_SLANT_ROMAN   = 0;
-const FC_SLANT_ITALIC  = 100;
-const FC_SLANT_OBLIQUE = 110;
-
-const FC_WIDTH_ULTRACONDENSED = 50;
-const FC_WIDTH_EXTRACONDENSED = 63;
-const FC_WIDTH_CONDENSED      = 75;
-const FC_WIDTH_SEMICONDENSED  = 87;
-const FC_WIDTH_NORMAL         = 100;
-const FC_WIDTH_SEMIEXPANDED   = 113;
-const FC_WIDTH_EXPANDED       = 125;
-const FC_WIDTH_EXTRAEXPANDED  = 150;
-const FC_WIDTH_ULTRAEXPANDED  = 200;
+const FcResultMatch = 0;
+const FcResultNoMatch = 1;
+const FcResultTypeMismatch = 2;
+const FcResultNoId = 3;
+const FcResultOutOfMemory = 4;
 
 const FC_OBJECT_FAMILY          = 1;
 const FC_OBJECT_FAMILYLANG      = 2;
@@ -86,22 +59,16 @@ const FC_OBJECT_FONT_VARIATIONS = 49;
 const FC_OBJECT_VARIABLE        = 50;
 const FC_OBJECT_FONT_HAS_HINT   = 51;
 
-const FcResultMatch = 0;
-const FcResultNoMatch = 1;
-const FcResultTypeMismatch = 2;
-const FcResultNoId = 3;
-const FcResultOutOfMemory = 4;
-
 const Os2WidthToFcWidth = {
-  1: FC_WIDTH_ULTRACONDENSED,
-  2: FC_WIDTH_EXTRACONDENSED,
-  3: FC_WIDTH_CONDENSED,
-  4: FC_WIDTH_SEMICONDENSED,
-  5: FC_WIDTH_NORMAL,
-  6: FC_WIDTH_SEMIEXPANDED,
-  7: FC_WIDTH_EXPANDED,
-  8: FC_WIDTH_EXTRAEXPANDED,
-  9: FC_WIDTH_ULTRAEXPANDED
+  1: FcConstants.FC_WIDTH_ULTRACONDENSED,
+  2: FcConstants.FC_WIDTH_EXTRACONDENSED,
+  3: FcConstants.FC_WIDTH_CONDENSED,
+  4: FcConstants.FC_WIDTH_SEMICONDENSED,
+  5: FcConstants.FC_WIDTH_NORMAL,
+  6: FcConstants.FC_WIDTH_SEMIEXPANDED,
+  7: FcConstants.FC_WIDTH_EXPANDED,
+  8: FcConstants.FC_WIDTH_EXTRAEXPANDED,
+  9: FcConstants.FC_WIDTH_ULTRAEXPANDED
 };
 
 if (typeof TextEncoder === 'undefined') { //nodejs
@@ -117,50 +84,50 @@ function strContainsIgnoreCase(s1, s2) {
 
 // See FcContainsWeight in fcfreetype.c
 function containsWeight(s) {
-  if (strContainsIgnoreCase(s, 'thin')) return FC_WEIGHT_THIN;
-  if (strContainsIgnoreCase(s, 'extralight')) return FC_WEIGHT_EXTRALIGHT;
-  if (strContainsIgnoreCase(s, 'ultralight')) return FC_WEIGHT_ULTRALIGHT;
-  if (strContainsIgnoreCase(s, 'demilight')) return FC_WEIGHT_DEMILIGHT;
-  if (strContainsIgnoreCase(s, 'semilight')) return FC_WEIGHT_SEMILIGHT;
-  if (strContainsIgnoreCase(s, 'light')) return FC_WEIGHT_LIGHT;
-  if (strContainsIgnoreCase(s, 'book')) return FC_WEIGHT_BOOK;
-  if (strContainsIgnoreCase(s, 'regular')) return FC_WEIGHT_REGULAR;
-  if (strContainsIgnoreCase(s, 'normal')) return FC_WEIGHT_NORMAL;
-  if (strContainsIgnoreCase(s, 'medium')) return FC_WEIGHT_MEDIUM;
-  if (strContainsIgnoreCase(s, 'demibold')) return FC_WEIGHT_DEMIBOLD;
-  if (strContainsIgnoreCase(s, 'demi')) return FC_WEIGHT_DEMIBOLD;
-  if (strContainsIgnoreCase(s, 'semibold')) return FC_WEIGHT_SEMIBOLD;
-  if (strContainsIgnoreCase(s, 'extrabold')) return FC_WEIGHT_EXTRABOLD;
-  if (strContainsIgnoreCase(s, 'superbold')) return FC_WEIGHT_EXTRABOLD;
-  if (strContainsIgnoreCase(s, 'ultrabold')) return FC_WEIGHT_EXTRABOLD;
-  if (strContainsIgnoreCase(s, 'bold')) return FC_WEIGHT_BOLD;
-  if (strContainsIgnoreCase(s, 'ultrablack')) return FC_WEIGHT_EXTRABLACK;
-  if (strContainsIgnoreCase(s, 'superblack')) return FC_WEIGHT_EXTRABLACK;
-  if (strContainsIgnoreCase(s, 'extrablack')) return FC_WEIGHT_EXTRABLACK;
+  if (strContainsIgnoreCase(s, 'thin')) return FcConstants.FC_WEIGHT_THIN;
+  if (strContainsIgnoreCase(s, 'extralight')) return FcConstants.FC_WEIGHT_EXTRALIGHT;
+  if (strContainsIgnoreCase(s, 'ultralight')) return FcConstants.FC_WEIGHT_ULTRALIGHT;
+  if (strContainsIgnoreCase(s, 'demilight')) return FcConstants.FC_WEIGHT_DEMILIGHT;
+  if (strContainsIgnoreCase(s, 'semilight')) return FcConstants.FC_WEIGHT_SEMILIGHT;
+  if (strContainsIgnoreCase(s, 'light')) return FcConstants.FC_WEIGHT_LIGHT;
+  if (strContainsIgnoreCase(s, 'book')) return FcConstants.FC_WEIGHT_BOOK;
+  if (strContainsIgnoreCase(s, 'regular')) return FcConstants.FC_WEIGHT_REGULAR;
+  if (strContainsIgnoreCase(s, 'normal')) return FcConstants.FC_WEIGHT_NORMAL;
+  if (strContainsIgnoreCase(s, 'medium')) return FcConstants.FC_WEIGHT_MEDIUM;
+  if (strContainsIgnoreCase(s, 'demibold')) return FcConstants.FC_WEIGHT_DEMIBOLD;
+  if (strContainsIgnoreCase(s, 'demi')) return FcConstants.FC_WEIGHT_DEMIBOLD;
+  if (strContainsIgnoreCase(s, 'semibold')) return FcConstants.FC_WEIGHT_SEMIBOLD;
+  if (strContainsIgnoreCase(s, 'extrabold')) return FcConstants.FC_WEIGHT_EXTRABOLD;
+  if (strContainsIgnoreCase(s, 'superbold')) return FcConstants.FC_WEIGHT_EXTRABOLD;
+  if (strContainsIgnoreCase(s, 'ultrabold')) return FcConstants.FC_WEIGHT_EXTRABOLD;
+  if (strContainsIgnoreCase(s, 'bold')) return FcConstants.FC_WEIGHT_BOLD;
+  if (strContainsIgnoreCase(s, 'ultrablack')) return FcConstants.FC_WEIGHT_EXTRABLACK;
+  if (strContainsIgnoreCase(s, 'superblack')) return FcConstants.FC_WEIGHT_EXTRABLACK;
+  if (strContainsIgnoreCase(s, 'extrablack')) return FcConstants.FC_WEIGHT_EXTRABLACK;
   // TODO ultra?
-  if (strContainsIgnoreCase(s, 'black')) return FC_WEIGHT_BLACK;
-  if (strContainsIgnoreCase(s, 'heavy')) return FC_WEIGHT_HEAVY;
+  if (strContainsIgnoreCase(s, 'black')) return FcConstants.FC_WEIGHT_BLACK;
+  if (strContainsIgnoreCase(s, 'heavy')) return FcConstants.FC_WEIGHT_HEAVY;
   return -1;
 }
 
 // See FcContainsWidth in fcfreetype.c
 function containsWidth(s) {
-  if (strContainsIgnoreCase(s, 'ultracondensed')) return FC_WIDTH_ULTRACONDENSED;
-  if (strContainsIgnoreCase(s, 'extracondensed')) return FC_WIDTH_EXTRACONDENSED;
-  if (strContainsIgnoreCase(s, 'semicondensed')) return FC_WIDTH_SEMICONDENSED;
-  if (strContainsIgnoreCase(s, 'condensed')) return FC_WIDTH_CONDENSED;
-  if (strContainsIgnoreCase(s, 'normal')) return FC_WIDTH_NORMAL;
-  if (strContainsIgnoreCase(s, 'semiexpanded')) return FC_WIDTH_SEMIEXPANDED;
-  if (strContainsIgnoreCase(s, 'ultraexpanded')) return FC_WIDTH_ULTRAEXPANDED;
-  if (strContainsIgnoreCase(s, 'expanded')) return FC_WIDTH_EXPANDED;
+  if (strContainsIgnoreCase(s, 'ultracondensed')) return FcConstants.FC_WIDTH_ULTRACONDENSED;
+  if (strContainsIgnoreCase(s, 'extracondensed')) return FcConstants.FC_WIDTH_EXTRACONDENSED;
+  if (strContainsIgnoreCase(s, 'semicondensed')) return FcConstants.FC_WIDTH_SEMICONDENSED;
+  if (strContainsIgnoreCase(s, 'condensed')) return FcConstants.FC_WIDTH_CONDENSED;
+  if (strContainsIgnoreCase(s, 'normal')) return FcConstants.FC_WIDTH_NORMAL;
+  if (strContainsIgnoreCase(s, 'semiexpanded')) return FcConstants.FC_WIDTH_SEMIEXPANDED;
+  if (strContainsIgnoreCase(s, 'ultraexpanded')) return FcConstants.FC_WIDTH_ULTRAEXPANDED;
+  if (strContainsIgnoreCase(s, 'expanded')) return FcConstants.FC_WIDTH_EXPANDED;
   return -1;
 }
 
 // See FcContainsSlant in fcfreetype.c
 function containsSlant(s) {
-  if (strContainsIgnoreCase(s, 'italic')) return FC_SLANT_ITALIC;
-  if (strContainsIgnoreCase(s, 'kursiv')) return FC_SLANT_ITALIC;
-  if (strContainsIgnoreCase(s, 'oblique')) return FC_SLANT_OBLIQUE;
+  if (strContainsIgnoreCase(s, 'italic')) return FcConstants.FC_SLANT_ITALIC;
+  if (strContainsIgnoreCase(s, 'kursiv')) return FcConstants.FC_SLANT_ITALIC;
+  if (strContainsIgnoreCase(s, 'oblique')) return FcConstants.FC_SLANT_OBLIQUE;
   return -1;
 }
 
@@ -217,6 +184,24 @@ module.exports = function (wasm) {
     memory
   } = wasm.instance.exports;
 
+  FcInitDebug();
+
+  // A 'register' re-used often for pointer sharing
+  const u32p = malloc(4);
+
+  function buf() {
+    return memory.buffer;
+  }
+
+  function smalloc(str) {
+    const utf8 = new TextEncoder().encode(str);
+    const ptr = malloc(utf8.length + 1);
+    const a = new Uint8Array(buf(), ptr, utf8.length + 1);
+    for (let i = 0; i < utf8.length; ++i) a[i] = utf8[i];
+    a[utf8.length] = 0;
+    return ptr;
+  }
+
   class Coverage {
     constructor(cset) {
       this.cset = cset;
@@ -240,278 +225,228 @@ module.exports = function (wasm) {
     }
   }
 
-  FcInitDebug();
+  class FontConfig extends FcConstants {
+    constructor() {
+      super();
+      this._cfg = FcConfigCreate();
+    }
 
-  const cfg = FcConfigCreate();
+    addFont(filename) {
+      const sfilename = smalloc(filename);
+      let raw;
 
-  // A "register" re-used often for pointer sharing
-  const u32p = malloc(4);
+      // Will throw if the file is invalid/unsupported/doesn't exist
+      try {
+        raw = fontkit.openSync(filename);
+      } catch (e) {
+        free(sfilename);
+        throw e;
+      }
 
-  function buf() {
-    return memory.buffer;
-  }
+      const jsfonts = raw.fonts ? raw.fonts : [raw];
 
-  function smalloc(str) {
-    const utf8 = new TextEncoder().encode(str);
-    const ptr = malloc(utf8.length + 1);
-    const a = new Uint8Array(buf(), ptr, utf8.length + 1);
-    for (let i = 0; i < utf8.length; ++i) a[i] = utf8[i];
-    a[utf8.length] = 0;
-    return ptr;
-  }
+      for (const [index, jsfont] of jsfonts.entries()) {
+        const fnt = FcPatternCreate();
 
-  function addFont(filename) {
-    const sfilename = smalloc(filename);
-    let raw;
+        // Family
+        if ('fontFamily' in jsfont.name.records) {
+          for (const [lang, text] of Object.entries(jsfont.name.records.fontFamily)) {
+            const pt = smalloc(text.toString());
+            const pl = smalloc(lang.toString());
+            FcPatternObjectAddString(fnt, FC_OBJECT_FAMILY, pt);
+            FcPatternObjectAddString(fnt, FC_OBJECT_FAMILYLANG, pl);
+            free(pt);
+            free(pl);
+          }
+        }
 
-    // Will throw if the file is invalid/unsupported/doesn't exist
-    try {
-      raw = fontkit.openSync(filename);
-    } catch (e) {
+        // Fullname
+        if ('fullName' in jsfont.name.records) {
+          for (const [lang, text] of Object.entries(jsfont.name.records.fullName)) {
+            const pt = smalloc(text.toString());
+            const pl = smalloc(lang.toString());
+            FcPatternObjectAddString(fnt, FC_OBJECT_FULLNAME, pt);
+            FcPatternObjectAddString(fnt, FC_OBJECT_FULLNAMELANG, pl);
+            free(pt);
+            free(pl);
+          }
+        }
+
+        // Style
+        if ('fontSubfamily' in jsfont.name.records) {
+          for (const [lang, text] of Object.entries(jsfont.name.records.fontSubfamily)) {
+            const pt = smalloc(text.toString());
+            const pl = smalloc(lang.toString());
+            FcPatternObjectAddString(fnt, FC_OBJECT_STYLE, pt);
+            FcPatternObjectAddString(fnt, FC_OBJECT_STYLELANG, pl);
+            free(pt);
+            free(pl);
+          }
+        }
+
+        // Charset
+        const cset = FcCharSetCreate();
+        let characterSet;
+
+        // Not all fonts have cmap, fontkit can throw an error here
+        try { characterSet = jsfont.characterSet; } catch (e) {}
+
+        if (characterSet) {
+          for (const c of jsfont.characterSet) FcCharSetAddChar(cset, c);
+          FcPatternObjectAddCharSet(fnt, FC_OBJECT_CHARSET, cset);
+        }
+
+        // Langset
+        const exclusiveLang = getExclusiveLang(jsfont['OS/2'].codePageRange);
+        const exclusiveLangPtr = exclusiveLang ? smalloc(exclusiveLang) : 0;
+        const lset = FcFreeTypeLangSet(cset, exclusiveLangPtr);
+        FcPatternObjectAddLangSet(fnt, FC_OBJECT_LANG, lset);
+        FcLangSetDestroy(lset);
+        FcCharSetDestroy(cset);
+        if (exclusiveLangPtr) free(exclusiveLangPtr);
+
+        // Weight, width from tables
+        let weight = FcWeightFromOpenTypeDouble(jsfont['OS/2'].usWeightClass);
+        let width = Os2WidthToFcWidth[jsfont['OS/2'].usWidthClass] || -1;
+        let slant = -1;
+        let decorative = false;
+
+        for (let i = 0; FcPatternObjectGetString(fnt, FC_OBJECT_STYLE, i, u32p) === FcResultMatch; ++i) {
+          const sptr = new Uint32Array(buf(), u32p, 1)[0];
+          const sraw = new Uint8Array(buf(), sptr);
+          const utf8 = new Uint8Array(buf(), sptr, sraw.indexOf(0));
+          const style = new TextDecoder().decode(utf8);
+
+          if (weight < 0) weight = containsWeight(style);
+          if (width < 0) width = containsWidth(style);
+          if (slant < 0) slant = containsSlant(style);
+          if (!decorative) decorative = containsDecorative(style);
+        }
+
+        // Guarantee slant, final lowest priority values
+        if (slant < 0) {
+          slant = FcConstants.FC_SLANT_ROMAN;
+          if (jsfont['OS/2'].fsSelection.italic) {
+            slant = FcConstants.FC_SLANT_ITALIC;
+          }
+        }
+
+        // Guarantee weight, final lowest priority values
+        if (weight < 0) {
+          weight = FcConstants.FC_WEIGHT_MEDIUM;
+          if (jsfont['OS/2'].fsSelection.bold) {
+            weight = FcConstants.FC_WEIGHT_BOLD;
+          }
+        }
+
+        // Guarantee width
+        if (width < 0) width = FcConstants.FC_WIDTH_NORMAL;
+
+        // TODO if no family name, use filename
+        // TODO if no fullname, use family name, style name
+
+        // Apply
+        FcPatternObjectAddString(fnt, FC_OBJECT_FILE, sfilename);
+        FcPatternObjectAddDouble(fnt, FC_OBJECT_WEIGHT, weight);
+        FcPatternObjectAddDouble(fnt, FC_OBJECT_WIDTH, width);
+        FcPatternObjectAddDouble(fnt, FC_OBJECT_SLANT, slant);
+        FcPatternObjectAddBool(fnt, FC_OBJECT_DECORATIVE, decorative);
+        FcPatternObjectAddInteger(fnt, FC_OBJECT_INDEX, index);
+
+        // Finish configuration and add the file
+        FcConfigSubstitute(this._cfg, fnt, 0 /*FcMatchPattern*/);
+        FcDefaultSubstitute(fnt);
+        FcConfigAddFile(this._cfg, fnt);
+      }
+
       free(sfilename);
-      throw e;
     }
 
-    const jsfonts = raw.fonts ? raw.fonts : [raw];
+    sort(fontspec, options) {
+      const pat = FcPatternCreate();
+      const matches = [];
 
-    for (const [index, jsfont] of jsfonts.entries()) {
-      const fnt = FcPatternCreate();
-
-      // Family
-      if ('fontFamily' in jsfont.name.records) {
-        for (const [lang, text] of Object.entries(jsfont.name.records.fontFamily)) {
-          const pt = smalloc(text.toString());
-          const pl = smalloc(lang.toString());
-          FcPatternObjectAddString(fnt, FC_OBJECT_FAMILY, pt);
-          FcPatternObjectAddString(fnt, FC_OBJECT_FAMILYLANG, pl);
-          free(pt);
-          free(pl);
-        }
+      if (typeof fontspec !== 'object' || typeof fontspec.family !== 'string') {
+        throw new Error('Pass an object with at least {family: string}');
       }
 
-      // Fullname
-      if ('fullName' in jsfont.name.records) {
-        for (const [lang, text] of Object.entries(jsfont.name.records.fullName)) {
-          const pt = smalloc(text.toString());
-          const pl = smalloc(lang.toString());
-          FcPatternObjectAddString(fnt, FC_OBJECT_FULLNAME, pt);
-          FcPatternObjectAddString(fnt, FC_OBJECT_FULLNAMELANG, pl);
-          free(pt);
-          free(pl);
-        }
+      const familyPtr = smalloc(fontspec.family);
+      FcPatternObjectAddString(pat, FC_OBJECT_FAMILY, familyPtr);
+      free(familyPtr);
+
+      if ('weight' in fontspec) {
+        FcPatternObjectAddDouble(pat, FC_OBJECT_WEIGHT, fontspec.weight);
       }
 
-      // Style
-      if ('fontSubfamily' in jsfont.name.records) {
-        for (const [lang, text] of Object.entries(jsfont.name.records.fontSubfamily)) {
-          const pt = smalloc(text.toString());
-          const pl = smalloc(lang.toString());
-          FcPatternObjectAddString(fnt, FC_OBJECT_STYLE, pt);
-          FcPatternObjectAddString(fnt, FC_OBJECT_STYLELANG, pl);
-          free(pt);
-          free(pl);
-        }
+      if ('width' in fontspec) {
+        FcPatternObjectAddInteger(pat, FC_OBJECT_WIDTH, fontspec.width);
       }
 
-      // Charset
-      const cset = FcCharSetCreate();
-      let characterSet;
-
-      // Not all fonts have cmap, fontkit can throw an error here
-      try { characterSet = jsfont.characterSet; } catch (e) {}
-
-      if (characterSet) {
-        for (const c of jsfont.characterSet) FcCharSetAddChar(cset, c);
-        FcPatternObjectAddCharSet(fnt, FC_OBJECT_CHARSET, cset);
+      if ('slant' in fontspec) {
+        FcPatternObjectAddInteger(pat, FC_OBJECT_SLANT, fontspec.slant);
       }
 
-      // Langset
-      const exclusiveLang = getExclusiveLang(jsfont['OS/2'].codePageRange);
-      const exclusiveLangPtr = exclusiveLang ? smalloc(exclusiveLang) : 0;
-      const lset = FcFreeTypeLangSet(cset, exclusiveLangPtr);
-      FcPatternObjectAddLangSet(fnt, FC_OBJECT_LANG, lset);
-      FcLangSetDestroy(lset);
-      FcCharSetDestroy(cset);
-      if (exclusiveLangPtr) free(exclusiveLangPtr);
-
-      // Weight, width from tables
-      let weight = FcWeightFromOpenTypeDouble(jsfont['OS/2'].usWeightClass);
-      let width = Os2WidthToFcWidth[jsfont['OS/2'].usWidthClass] || -1;
-      let slant = -1;
-      let decorative = false;
-
-      for (let i = 0; FcPatternObjectGetString(fnt, FC_OBJECT_STYLE, i, u32p) === FcResultMatch; ++i) {
-        const sptr = new Uint32Array(buf(), u32p, 1)[0];
-        const sraw = new Uint8Array(buf(), sptr);
-        const utf8 = new Uint8Array(buf(), sptr, sraw.indexOf(0));
-        const style = new TextDecoder().decode(utf8);
-
-        if (weight < 0) weight = containsWeight(style);
-        if (width < 0) width = containsWidth(style);
-        if (slant < 0) slant = containsSlant(style);
-        if (!decorative) decorative = containsDecorative(style);
+      if ('coverage' in fontspec) {
+        const cset = FcCharSetCreate();
+        for (const c of fontspec.coverage) FcCharSetAddChar(cset, c);
+        FcPatternObjectAddCharSet(pat, FC_OBJECT_CHARSET, cset);
+        FcCharSetDestroy(cset);
       }
 
-      // Guarantee slant, final lowest priority values
-      if (slant < 0) {
-        slant = FC_SLANT_ROMAN;
-        if (jsfont['OS/2'].fsSelection.italic) {
-          slant = FC_SLANT_ITALIC;
-        }
-      }
+      if ('lang' in fontspec) {
+        const lset = FcLangSetCreate();
 
-      // Guarantee weight, final lowest priority values
-      if (weight < 0) {
-        weight = FC_WEIGHT_MEDIUM;
-        if (jsfont['OS/2'].fsSelection.bold) {
-          weight = FC_WEIGHT_BOLD;
-        }
-      }
-
-      // Guarantee width
-      if (width < 0) width = FC_WIDTH_NORMAL;
-
-      // TODO if no family name, use filename
-      // TODO if no fullname, use family name, style name
-
-      // Apply
-      FcPatternObjectAddString(fnt, FC_OBJECT_FILE, sfilename);
-      FcPatternObjectAddDouble(fnt, FC_OBJECT_WEIGHT, weight);
-      FcPatternObjectAddDouble(fnt, FC_OBJECT_WIDTH, width);
-      FcPatternObjectAddDouble(fnt, FC_OBJECT_SLANT, slant);
-      FcPatternObjectAddBool(fnt, FC_OBJECT_DECORATIVE, decorative);
-      FcPatternObjectAddInteger(fnt, FC_OBJECT_INDEX, index);
-
-      // Finish configuration and add the file
-      FcConfigSubstitute(cfg, fnt, 0 /*FcMatchPattern*/);
-      FcDefaultSubstitute(fnt);
-      FcConfigAddFile(cfg, fnt);
-    }
-
-    free(sfilename);
-  }
-
-  function sort(fontspec, options) {
-    const pat = FcPatternCreate();
-    const matches = [];
-
-    if (typeof fontspec !== 'object' || typeof fontspec.family !== 'string') {
-      throw new Error('Pass an object with at least {family: string}');
-    }
-
-    const familyPtr = smalloc(fontspec.family);
-    FcPatternObjectAddString(pat, FC_OBJECT_FAMILY, familyPtr);
-    free(familyPtr);
-
-    if ('weight' in fontspec) {
-      FcPatternObjectAddDouble(pat, FC_OBJECT_WEIGHT, fontspec.weight);
-    }
-
-    if ('width' in fontspec) {
-      FcPatternObjectAddInteger(pat, FC_OBJECT_WIDTH, fontspec.width);
-    }
-
-    if ('slant' in fontspec) {
-      FcPatternObjectAddInteger(pat, FC_OBJECT_SLANT, fontspec.slant);
-    }
-
-    if ('coverage' in fontspec) {
-      const cset = FcCharSetCreate();
-      for (const c of fontspec.coverage) FcCharSetAddChar(cset, c);
-      FcPatternObjectAddCharSet(pat, FC_OBJECT_CHARSET, cset);
-      FcCharSetDestroy(cset);
-    }
-
-    if ('lang' in fontspec) {
-      const lset = FcLangSetCreate();
-
-      if (Array.isArray(fontspec.lang)) {
-        for (const lang of fontspec.lang) {
-          const langPtr = smalloc(lang);
+        if (Array.isArray(fontspec.lang)) {
+          for (const lang of fontspec.lang) {
+            const langPtr = smalloc(lang);
+            FcLangSetAdd(lset, langPtr);
+            free(langPtr);
+          }
+        } else {
+          const langPtr = smalloc(fontspec.lang);
           FcLangSetAdd(lset, langPtr);
           free(langPtr);
         }
-      } else {
-        const langPtr = smalloc(fontspec.lang);
-        FcLangSetAdd(lset, langPtr);
-        free(langPtr);
+
+        FcPatternObjectAddLangSet(pat, FC_OBJECT_LANG, lset);
+        FcLangSetDestroy(lset);
       }
 
-      FcPatternObjectAddLangSet(pat, FC_OBJECT_LANG, lset);
-      FcLangSetDestroy(lset);
-    }
+      const cspPtr = options.coverage ? malloc(4) : 0;
+      const set = FcFontSort(this._cfg, pat, 1, cspPtr, u32p);
+      const result = new Uint32Array(buf(), u32p, 1)[0];
 
-    const cspPtr = options.coverage ? malloc(4) : 0;
-    const set = FcFontSort(cfg, pat, 1, cspPtr, u32p);
-    const result = new Uint32Array(buf(), u32p, 1)[0];
+      if (result !== FcResultMatch) throw new Error('FcResult: ' + result);
 
-    if (result !== FcResultMatch) throw new Error('FcResult: ' + result);
+      const [nfont,, fontsPtrPtr] = new Uint32Array(buf(), set, 3);
 
-    const [nfont,, fontsPtrPtr] = new Uint32Array(buf(), set, 3);
+      for (let i = 0; i < nfont; ++i) {
+        const fontsPtr = new Uint32Array(buf(), fontsPtrPtr + i * 4, 1)[0];
+        if (FcPatternObjectGetString(fontsPtr, FC_OBJECT_FILE, 0, u32p) === FcResultMatch) {
+          const filePtr = new Uint32Array(buf(), u32p, 1)[0];
+          const unsized = new Uint8Array(buf(), filePtr);
+          const utf8 = new Uint8Array(buf(), filePtr, unsized.indexOf(0));
+          const file = new TextDecoder().decode(utf8);
 
-    for (let i = 0; i < nfont; ++i) {
-      const fontsPtr = new Uint32Array(buf(), fontsPtrPtr + i * 4, 1)[0];
-      if (FcPatternObjectGetString(fontsPtr, FC_OBJECT_FILE, 0, u32p) === FcResultMatch) {
-        const filePtr = new Uint32Array(buf(), u32p, 1)[0];
-        const unsized = new Uint8Array(buf(), filePtr);
-        const utf8 = new Uint8Array(buf(), filePtr, unsized.indexOf(0));
-        const file = new TextDecoder().decode(utf8);
-
-        if (FcPatternObjectGetInteger(fontsPtr, FC_OBJECT_INDEX, 0, u32p) === FcResultMatch) {
-          const index = new Uint32Array(buf(), u32p, 1)[0];
-          matches.push({file, index});
+          if (FcPatternObjectGetInteger(fontsPtr, FC_OBJECT_INDEX, 0, u32p) === FcResultMatch) {
+            const index = new Uint32Array(buf(), u32p, 1)[0];
+            matches.push({file, index});
+          } else {
+            throw new Error('Font without an index?');
+          }
         } else {
-          throw new Error('Font without an index?');
+          throw new Error('Font without a filename?');
         }
-      } else {
-        throw new Error('Font without a filename?');
       }
+
+      const csp = cspPtr ? new Uint32Array(buf(), cspPtr, 1)[0] : 0;
+      if (cspPtr) free(cspPtr);
+
+      FcFontSetDestroy(set);
+
+      return new Cascade(matches, csp ? new Coverage(csp) : null);
     }
-
-    const csp = cspPtr ? new Uint32Array(buf(), cspPtr, 1)[0] : 0;
-    if (cspPtr) free(cspPtr);
-
-    FcFontSetDestroy(set);
-
-    return new Cascade(matches, csp ? new Coverage(csp) : null);
   }
 
-  return {
-    addFont,
-    sort,
-
-    FC_WEIGHT_THIN,
-    FC_WEIGHT_EXTRALIGHT,
-    FC_WEIGHT_ULTRALIGHT,
-    FC_WEIGHT_LIGHT,
-    FC_WEIGHT_DEMILIGHT,
-    FC_WEIGHT_SEMILIGHT,
-    FC_WEIGHT_BOOK,
-    FC_WEIGHT_REGULAR,
-    FC_WEIGHT_NORMAL,
-    FC_WEIGHT_MEDIUM,
-    FC_WEIGHT_DEMIBOLD,
-    FC_WEIGHT_SEMIBOLD,
-    FC_WEIGHT_BOLD,
-    FC_WEIGHT_EXTRABOLD,
-    FC_WEIGHT_ULTRABOLD,
-    FC_WEIGHT_BLACK,
-    FC_WEIGHT_HEAVY,
-    FC_WEIGHT_EXTRABLACK,
-    FC_WEIGHT_ULTRABLACK,
-
-    FC_SLANT_ROMAN,
-    FC_SLANT_ITALIC,
-    FC_SLANT_OBLIQUE,
-
-    FC_WIDTH_ULTRACONDENSED,
-    FC_WIDTH_EXTRACONDENSED,
-    FC_WIDTH_CONDENSED,
-    FC_WIDTH_SEMICONDENSED,
-    FC_WIDTH_NORMAL,
-    FC_WIDTH_SEMIEXPANDED,
-    FC_WIDTH_EXPANDED,
-    FC_WIDTH_EXTRAEXPANDED,
-    FC_WIDTH_ULTRAEXPANDED
-  };
+  return FontConfig;
 }
