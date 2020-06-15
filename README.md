@@ -111,6 +111,8 @@ The WASM distributed in NPM is not built with debugging calls, though there are 
 
 ## Building the C parts
 
+Make sure you clone with `--recurse-submodules`
+
 These instructions are for macOS, but they should be similar for Linux. The steps are familiar to anyone who has done cross-compilation before, but the first few are WebAssembly-specific.
 
 1. `LLVM_PATH=/usr/local/Cellar/llvm/9.0.0/bin`. or somewhere else appropriate. You do need a recent version of LLVM that supports WebAssembly.
