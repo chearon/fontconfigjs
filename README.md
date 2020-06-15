@@ -115,20 +115,21 @@ Make sure you clone with `--recurse-submodules`
 
 These instructions are for macOS, but they should be similar for Linux. The steps are familiar to anyone who has done cross-compilation before, but the first few are WebAssembly-specific.
 
-1. `LLVM_PATH=/usr/local/Cellar/llvm/9.0.0/bin`. or somewhere else appropriate. You do need a recent version of LLVM that supports WebAssembly.
-2. `git clone git@github.com:chearon/wasi-libc.git`. The upstream version builds with symbols that introduce runtime dependencies.
-3. `cd wasi-libc`
-4. `make WASM_CC=$LLVM_PATH/clang WASM_AR=$LLVM_PATH/llvm-ar WASM_NM=$LLVM_PATH/llvm-nm`
-5. `WASI_SYSROOT=$(pwd)/sysroot`
-6. Download [`wasi-sdk` builtins](https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-8/libclang_rt.builtins-wasm32-wasi-8.0.tar.gz) and copy `libclang_rt.builtins-wasm32.a` to `/usr/local/Cellar/llvm/9.0.0/lib/clang/9.0.0/lib/wasi/` (or wherever you installed your compiler in step 1).
-7. `export LIBTOOLIZE=glibtoolize` (these next 3 steps might be macOS-specific)
-8. `export GETTEXTIZE=/usr/local/opt/gettext/bin/gettextize`
-9. `export AUTOPOINT=/usr/local/opt/gettext/bin/autopoint`
-10. `export CC=$LLVM_PATH/clang`
-11. `export CFLAGS=-target wasm32-wasi --sysroot=$WASI_SYSROOT` (for debugging, you can also add `-DWASI_RUNTIME` to see FontConfig logging)
-12. `export AR=$LLVM_PATH/llvm-ar`
-13. `export RANLIB=$LLVM_PATH/llvm-ranlib`
-14. Patch config.sub: `grep -q -F -- '-wasi' config.sub || sed -i -e 's/-nacl\*)/-nacl*|-wasi)/' config.sub` (thank you so much, [Frank Denis](https://00f.net/2019/04/07/compiling-to-webassembly-with-llvm-and-clang/))
-15. `./autogen.sh --host=wasm32-wasi`
-16. `make`
-17. `$LLVM_PATH/wasm-ld  -L$WASI_SYSROOT/lib/wasm32-wasi --no-entry --export-all -lc --whole-archive src/.libs/libfontconfig.a -o ../lib.wasm`
+1. `cd fontconfig; patch -p1 < ../pure-wasm-compat-fontconfig.patch; cd..`
+2. `LLVM_PATH=/usr/local/Cellar/llvm/9.0.0/bin`. or somewhere else appropriate. You do need a recent version of LLVM that supports WebAssembly.
+3. `git clone git@github.com:chearon/wasi-libc.git`. The upstream version builds with symbols that introduce runtime dependencies.
+4. `cd wasi-libc`
+5. `make WASM_CC=$LLVM_PATH/clang WASM_AR=$LLVM_PATH/llvm-ar WASM_NM=$LLVM_PATH/llvm-nm`
+6. `WASI_SYSROOT=$(pwd)/sysroot`
+7. Download [`wasi-sdk` builtins](https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-8/libclang_rt.builtins-wasm32-wasi-8.0.tar.gz) and copy `libclang_rt.builtins-wasm32.a` to `/usr/local/Cellar/llvm/9.0.0/lib/clang/9.0.0/lib/wasi/` (or wherever you installed your compiler in step 1).
+8. `export LIBTOOLIZE=glibtoolize` (these next 3 steps might be macOS-specific)
+9. `export GETTEXTIZE=/usr/local/opt/gettext/bin/gettextize`
+10. `export AUTOPOINT=/usr/local/opt/gettext/bin/autopoint`
+11. `export CC=$LLVM_PATH/clang`
+12. `export CFLAGS=-target wasm32-wasi --sysroot=$WASI_SYSROOT` (for debugging, you can also add `-DWASI_RUNTIME` to see FontConfig logging)
+13. `export AR=$LLVM_PATH/llvm-ar`
+14. `export RANLIB=$LLVM_PATH/llvm-ranlib`
+15. Patch config.sub: `grep -q -F -- '-wasi' config.sub || sed -i -e 's/-nacl\*)/-nacl*|-wasi)/' config.sub` (thank you so much, [Frank Denis](https://00f.net/2019/04/07/compiling-to-webassembly-with-llvm-and-clang/))
+16. `./autogen.sh --host=wasm32-wasi`
+17. `make`
+18. `$LLVM_PATH/wasm-ld  -L$WASI_SYSROOT/lib/wasm32-wasi --no-entry --export-all -lc --whole-archive src/.libs/libfontconfig.a -o ../lib.wasm`
