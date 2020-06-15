@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "fontkit": "^1.8.0"
+  },
+  "name": "fontconfig",
+  "files": [
+    "lib.wasm",
+    "src/*.js"
+  ],
+  "version": "0.0.2",
+  "description": "In-memory version of FontConfig in JS/WASM (no native dependencies)",
+  "main": "src/node.js",
+  "browser": "src/browser.js",
+  "repository": "git@github.com:chearon/fontconfigjs.git",
+  "author": "Caleb Hearon <caleb@chearon.net>",
+  "license": "MIT"
+}

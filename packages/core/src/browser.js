@@ -1,6 +1,7 @@
 const FontConfig = require('./fontconfig');
 const Buffer = require('buffer').Buffer;
 
+// TODO let 'em specify from where
 module.exports = function (fetchUrl) {
   return fetch(fetchUrl)
     .then(res => res.arrayBuffer())
