@@ -26,4 +26,11 @@ module.exports = WebAssembly.instantiate(fs.readFileSync(libpath), imports)
   .then(wasm => {
     if (wasi) wasi.start(wasm.instance);
 		return new FontConfig(wasm);
-	});
+  })
+  .then(FontConfig => {
+    return class NodeFontConfig extends FontConfig {
+      async loadBuffer(filename) {
+        return fs.readFileSync(filename);
+      }
+    }
+  });

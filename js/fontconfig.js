@@ -231,13 +231,14 @@ module.exports = function (wasm) {
       this._cfg = FcConfigCreate();
     }
 
-    addFont(filename) {
+    async addFont(filename) {
       const sfilename = smalloc(filename);
       let raw;
 
       // Will throw if the file is invalid/unsupported/doesn't exist
       try {
-        raw = fontkit.openSync(filename);
+        const buf = await this.loadBuffer(filename);
+        raw = fontkit.create(buf);
       } catch (e) {
         free(sfilename);
         throw e;
