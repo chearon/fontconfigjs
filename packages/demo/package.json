@@ -1,0 +1,22 @@
+{
+  "name": "fontconfig-js-demo",
+  "version": "1.0.0",
+  "source": "src/index.html",
+  "main": "dist/index.html",
+  "repository": "git@github.com:chearon/fontconfigjs.git",
+  "author": "Caleb Hearon <caleb@chearon.net>",
+  "license": "MIT",
+  "scripts": {
+    "build:parcel": "parcel build --no-minify src/index.html",
+    "build": "yarn build:parcel && cp -r fonts dist && cp node_modules/fontconfig/lib.wasm dist"
+  },
+  "devDependencies": {
+    "parcel": "^2.0.0-alpha.3.2"
+  },
+  "browserslist": [
+    "last 1 chrome version"
+  ],
+  "dependencies": {
+    "vue": "^2.6.11"
+  }
+}

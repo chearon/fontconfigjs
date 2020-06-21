@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>fontconfigjs</title>
+    <script type="text/javascript" src="index.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500&display=swap" rel="stylesheet">
+    <style type="text/css">
+      html, body {
+        margin: 0;
+        height: 100%;
+      }
+
+      body {
+        background: #333;
+        color: #eee;
+        font: 300 16px Ubuntu;
+        display: grid;
+        grid: 1fr max-content 2fr / 1fr max-content 20em 2fr;
+      }
+
+      .help {
+        grid-area: 2 / 3;
+        margin-left: 3em;
+      }
+
+      .help__para {
+        font-size: 0.8em;
+        color: rgb(223, 188, 137);
+				margin: 2em 0;
+				line-height: 1.8;
+        text-indent: 1em;
+      }
+
+      .help__para--first {
+        margin-top: 0;
+      }
+
+      .demo {
+        grid-area: 2 / 2;
+      }
+
+      .fonts {
+        height: calc(1.2 * 24 * 1em);
+        overflow: auto;
+      }
+
+      .form {
+        display: grid;
+        grid: auto / max-content max-content;
+        align-items: baseline;
+        gap: 0.5em;
+      }
+
+      .form__label {
+        text-align: right;
+      }
+
+      .results {
+        line-height: 1.2;
+        height: calc(1.2 * 4 * 1em);
+        overflow: auto;
+      }
+
+      .summarizer {
+        padding-top: 1em;
+        border-top: 1px solid;
+        margin-top: 1em;
+        margin-bottom: 3em;
+      }
+
+      .results li:first-child {
+        color: rgb(155, 237, 155);
+        font-weight: 400;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="help">
+      <p class="help__para help__para--first">a slightly stripped-down <strong>fontconfig</strong> is running in your browser using WebAssembly!</p>
+      <p class="help__para">this is useful if you need to do your own <strong>font selection</strong>, as an alternate to font-manager, etc</p>
+      <p class="help__para">you do have to <strong>add</strong> each ttf manually</p>
+      <p class="help__para"><strong>check off</strong> some of the included demo fonts to add them to the fontconfig database for querying<p>
+      <p class="help__para">or you can <strong>drag a file to the browser</strong> to add it to the database</p>
+      <p class="help__para">then test out <strong>querying fonts</strong> you've loaded by filling out any or none of the different fields</p>
+    </div>
+  </body>
+</html>
