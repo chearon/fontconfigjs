@@ -7,7 +7,7 @@
     "lib.wasm",
     "src/*.js"
   ],
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "In-memory version of FontConfig in JS/WASM (no native dependencies)",
   "main": "src/node.js",
   "browser": "src/browser.js",
