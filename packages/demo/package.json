@@ -8,7 +8,9 @@
   "license": "MIT",
   "scripts": {
     "build:parcel": "parcel build --no-minify src/index.html",
-    "build": "yarn build:parcel && cp -r fonts dist && cp node_modules/fontconfig/lib.wasm dist"
+    "build": "yarn build:parcel && cp -r fonts dist && cp node_modules/fontconfig/lib.wasm dist",
+    "build:parcel:gh": "parcel build --no-minify src/index.html --public-url ./",
+    "build:gh": "yarn build:parcel:gh && cp -r fonts dist && cp node_modules/fontconfig/lib.wasm dist && rm -rf ../../docs && mv dist ../../docs"
   },
   "devDependencies": {
     "parcel": "^2.0.0-alpha.3.2"
