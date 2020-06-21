@@ -232,16 +232,37 @@ module.exports = function (wasm) {
     }
 
     async addFont(filename) {
-      const sfilename = smalloc(filename);
-      let raw;
+      let raw, sfilename;
 
       // Will throw if the file is invalid/unsupported/doesn't exist
-      try {
-        const buf = await this.loadBuffer(filename);
-        raw = fontkit.create(buf);
-      } catch (e) {
-        free(sfilename);
-        throw e;
+      if (typeof filename === "string") {
+        sfilename = smalloc(filename);
+
+        try {
+          const buf = await this.loadBuffer(filename);
+          raw = fontkit.create(buf);
+        } catch (e) {
+          free(sfilename);
+          throw e;
+        }
+      } else if (typeof File === "function" && filename instanceof File) {
+        sfilename = smalloc(filename.name);
+
+        try {
+          const arrayBuffer = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = e => reject(e);
+            reader.readAsArrayBuffer(filename);
+          });
+
+          raw = fontkit.create(Buffer.from(arrayBuffer));
+        } catch (e) {
+          free(sfilename);
+          throw e;
+        }
+      } else {
+        throw new Error("Unsupported argument type");
       }
 
       const jsfonts = raw.fonts ? raw.fonts : [raw];
