@@ -2,8 +2,6 @@
 
 This is essentially a stripped-down version of FontConfig compiled to WebAssembly with a Javascript API that works in nodejs and the browser.
 
-The FontConfig source tree is mostly intact for ease of merging with future versions. 
-
 ## How?
 
 ```javascript
