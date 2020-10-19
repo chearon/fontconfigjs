@@ -130,4 +130,4 @@ These instructions are for macOS, but they should be similar for Linux. The step
 15. Patch config.sub: `grep -q -F -- '-wasi' config.sub || sed -i -e 's/-nacl\*)/-nacl*|-wasi)/' config.sub` (thank you so much, [Frank Denis](https://00f.net/2019/04/07/compiling-to-webassembly-with-llvm-and-clang/))
 16. `./autogen.sh --host=wasm32-wasi`
 17. `make`
-18. `$LLVM_PATH/wasm-ld  -L$WASI_SYSROOT/lib/wasm32-wasi --no-entry --export-all -lc --whole-archive src/.libs/libfontconfig.a -o ../lib.wasm`
+18. `$LLVM_PATH/wasm-ld  -L$WASI_SYSROOT/lib/wasm32-wasi --no-entry --export-all -lc --whole-archive src/.libs/libfontconfig.a -o ../packages/core/lib.wasm`
