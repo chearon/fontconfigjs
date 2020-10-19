@@ -24,7 +24,7 @@ try {
 const libpath = path.join(__dirname, '..', 'lib.wasm');
 module.exports = WebAssembly.instantiate(fs.readFileSync(libpath), imports)
   .then(wasm => {
-    if (wasi) wasi.start(wasm.instance);
+    if (wasi) wasi.initialize(wasm.instance);
 		return new FontConfig(wasm);
   })
   .then(FontConfig => {
