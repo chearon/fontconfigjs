@@ -5,12 +5,14 @@
   "name": "fontconfig",
   "files": [
     "lib.wasm",
-    "src/*.js"
+    "src/*.js",
+    "types.d.ts"
   ],
   "version": "0.1.0",
   "description": "In-memory version of FontConfig in JS/WASM (no native dependencies)",
   "main": "src/node.js",
   "browser": "src/browser.js",
+  "types": "types.d.ts",
   "repository": "git@github.com:chearon/fontconfigjs.git",
   "author": "Caleb Hearon <caleb@chearon.net>",
   "license": "MIT"
