@@ -103,8 +103,14 @@ require("fontconfig")("lib.wasm").then(async FontConfigClass => {
         <p class="summarizer">{{nhas}} loaded into db</p>
         
         <div class="form">
-          <label class="form__label">Family</label>
-          <input class="form__field" type="text" @input="onSearch" v-model="search.family" placeholder="Arimo">
+          <label class="form__label">Families</label>
+          <input class="form__field" type="text" @input="onSearch" v-model="family1" placeholder="Arimo">
+
+          <label class="form__label"></label>
+          <input class="form__field" type="text" @input="onSearch" v-model="family2">
+
+          <label class="form__label"></label>
+          <input class="form__field" type="text" @input="onSearch" v-model="family3">
 
           <label class="form__label">Weight</label>
           <select class="form__field" v-model.number="search.weight" @change="onSearch">
@@ -132,7 +138,7 @@ require("fontconfig")("lib.wasm").then(async FontConfigClass => {
 
         <ol class="results">
           <li v-for="r in results">{{r.file}} [{{r.index}}]</li>
-					<li v-if="nhas === 0 && didTrySearch">Load some fonts first!</li>
+          <li v-if="nhas === 0 && didTrySearch">Load some fonts first!</li>
         </ol>
       </div>
     `,
@@ -146,7 +152,6 @@ require("fontconfig")("lib.wasm").then(async FontConfigClass => {
       const has = {};
       const rqd = {};
       const search = {
-        family: "",
         width: FontConfig.FC_WIDTH_NORMAL,
         weight: FontConfig.FC_WEIGHT_NORMAL,
         slant: FontConfig.FC_SLANT_ROMAN,
@@ -154,9 +159,15 @@ require("fontconfig")("lib.wasm").then(async FontConfigClass => {
         coverage: ""
       };
 
+      const families = {
+        family1: "",
+        family2: "",
+        family3: ""
+      };
+
       for (const font of db) rqd[font] = has[font] = false;
 
-      return {has, rqd, results: [], search, didTrySearch: false};
+      return Object.assign({has, rqd, results: [], search, didTrySearch: false}, families);
     },
     computed: {
       nhas() {
@@ -171,14 +182,14 @@ require("fontconfig")("lib.wasm").then(async FontConfigClass => {
       }
     },
     methods: {
-			async addFont(filename) {
+      async addFont(filename) {
         this.rqd[filename] = true;
         await cfg.addFont(filename);
         this.has[filename] = true;
-			},
+      },
       async onInput(font) {
-				await this.addFont(font);
-				this.onSearch();
+        await this.addFont(font);
+        this.onSearch();
       },
       async onReqAll() {
         const fonts = db.slice();
@@ -190,18 +201,22 @@ require("fontconfig")("lib.wasm").then(async FontConfigClass => {
           }
           await Promise.all(p);
         }
-				this.onSearch();
+        this.onSearch();
       },
       onSearch() {
-				if (this.nhas > 0) {
-					const search = Object.assign({}, this.search);
-					search.coverage = search.coverage.split(",").map(s => parseInt(s, 16)).filter(Number.isFinite);
-					const cascade = cfg.sort(search);
-					this.results = Object.freeze(cascade.matches.slice());
-				} else {
-					this.results = [];
-					this.didTrySearch = true;
-				}
+        if (this.nhas > 0) {
+          const search = Object.assign({}, this.search);
+          const families = [this.family1];
+          if (this.family2) families.push(this.family2);
+          if (this.family3) families.push(this.family3);
+          search.family = families;
+          search.coverage = search.coverage.split(",").map(s => parseInt(s, 16)).filter(Number.isFinite);
+          const cascade = cfg.sort(search);
+          this.results = Object.freeze(cascade.matches.slice());
+        } else {
+          this.results = [];
+          this.didTrySearch = true;
+        }
       }
     }
   });
@@ -227,7 +242,7 @@ require("fontconfig")("lib.wasm").then(async FontConfigClass => {
         console.error("couldn't load " + file.name, e);
       }
     }
-		vm.onSearch();
+    vm.onSearch();
   });
 });
 

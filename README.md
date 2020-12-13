@@ -38,14 +38,16 @@ Returns the best possible cascade list of fonts based on a description (with lat
 
 The pattern object passed to `FontConfig.prototype.sort` looks like:
 
-- `family` (string) (required)
+- `family` (string|array<string>) (required)
 - `weight` (number)
 - `width` (number)
 - `slant` (number)
 - `lang`  (string|array<string>)
 - `coverage` (array<number>)
 
-For more details on the individual values, continue below.
+When the `family` is an array of more than one family, it is a prioritized list. If the first family isn't found, FontConfig tries the second family. If more than one is found, they will all appear in the results in prioritized order.
+
+For more details on other properties' individual values, continue below.
 
 #### Weights
 

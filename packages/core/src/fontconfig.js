@@ -412,13 +412,17 @@ module.exports = function (wasm) {
       const pat = FcPatternCreate();
       const matches = [];
 
-      if (typeof fontspec !== 'object' || typeof fontspec.family !== 'string') {
+      if (typeof fontspec !== 'object' || typeof fontspec.family !== 'string' && !Array.isArray(fontspec.family)) {
         throw new Error('Pass an object with at least {family: string}');
       }
 
-      const familyPtr = smalloc(fontspec.family);
-      FcPatternObjectAddString(pat, FC_FAMILY_OBJECT, familyPtr);
-      free(familyPtr);
+      const familyNormalized = Array.isArray(fontspec.family) ? fontspec.family : [fontspec.family];
+
+      for (const family of familyNormalized) {
+        const familyPtr = smalloc(family);
+        FcPatternObjectAddString(pat, FC_FAMILY_OBJECT, familyPtr);
+        free(familyPtr);
+      }
 
       if ('weight' in fontspec) {
         FcPatternObjectAddDouble(pat, FC_WEIGHT_OBJECT, fontspec.weight);
