@@ -1,17 +1,14 @@
-type FontSpec = {
-  family: string,
-  weight?: number,
-  width?: number,
-  slant?: number,
-  lang?: string | string[],
-  coverage?: string[]
+declare class CoverageClass {
+  done();
+  has(c: string): boolean;
 }
 
-type Options = {
-  coverage?: number[]
+declare class CascadeClass {
+  public matches: {file: string, index: number}[];
+  public coverage: CoverageClass;
 }
 
-declare class FontConfig {
+declare class FontConfigClass {
   static FC_WEIGHT_THIN: number;
   static FC_WEIGHT_EXTRALIGHT: number;
   static FC_WEIGHT_ULTRALIGHT: number;
@@ -46,9 +43,31 @@ declare class FontConfig {
   static FC_SLANT_ITALIC: number;
   static FC_SLANT_OBLIQUE: number;
 
-  addFont(filename: string): Promise<undefined>
-  sort(fontspec: FontSpec, options?: Options): void
+  addFont(filename: string): Promise<undefined>;
+  sort(fontspec: FontConfigInit.FontSpec, options?: FontConfigInit.Options): CascadeClass;
 }
 
-declare const fc: Promise<typeof FontConfig>;
-export = fc;
+declare namespace FontConfigInit {
+  type FontSpec = {
+    family: string,
+    weight?: number,
+    width?: number,
+    slant?: number,
+    lang?: string | string[],
+    coverage?: string[]
+  }
+
+  type Options = {
+    coverage?: number[]
+  }
+
+  type FontConfig = FontConfigClass;
+
+  type Coverage = CoverageClass;
+
+  type Cascade = CascadeClass;
+}
+
+declare const FontConfigInit: Promise<typeof FontConfigClass>;
+
+export = FontConfigInit;
