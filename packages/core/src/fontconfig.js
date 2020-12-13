@@ -270,6 +270,18 @@ module.exports = function (wasm) {
       for (const [index, jsfont] of jsfonts.entries()) {
         const fnt = FcPatternCreate();
 
+        // Preferred
+        if ('preferredFamily' in jsfont.name.records) {
+          for (const [lang, text] of Object.entries(jsfont.name.records.preferredFamily)) {
+            const pt = smalloc(text.toString());
+            const pl = smalloc(lang.toString());
+            FcPatternObjectAddString(fnt, FC_FAMILY_OBJECT, pt);
+            FcPatternObjectAddString(fnt, FC_FAMILYLANG_OBJECT, pl);
+            free(pt);
+            free(pl);
+          }
+        }
+
         // Family
         if ('fontFamily' in jsfont.name.records) {
           for (const [lang, text] of Object.entries(jsfont.name.records.fontFamily)) {
@@ -289,6 +301,18 @@ module.exports = function (wasm) {
             const pl = smalloc(lang.toString());
             FcPatternObjectAddString(fnt, FC_FULLNAME_OBJECT, pt);
             FcPatternObjectAddString(fnt, FC_FULLNAMELANG_OBJECT, pl);
+            free(pt);
+            free(pl);
+          }
+        }
+
+        // Preferred style
+        if ('preferredSubFamily' in jsfont.name.records) {
+          for (const [lang, text] of Object.entries(jsfont.name.records.preferredSubFamily)) {
+            const pt = smalloc(text.toString());
+            const pl = smalloc(lang.toString());
+            FcPatternObjectAddString(fnt, FC_STYLE_OBJECT, pt);
+            FcPatternObjectAddString(fnt, FC_STYLELANG_OBJECT, pl);
             free(pt);
             free(pl);
           }
