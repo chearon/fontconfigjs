@@ -149,25 +149,27 @@ require("fontconfig")("lib.wasm").then(async FontConfigClass => {
       this.slants = slants;
     },
     data() {
-      const has = {};
       const rqd = {};
-      const search = {
-        width: FontConfig.FC_WIDTH_NORMAL,
-        weight: FontConfig.FC_WEIGHT_NORMAL,
-        slant: FontConfig.FC_SLANT_ROMAN,
-        lang: "",
-        coverage: ""
-      };
+      const has = {};
 
-      const families = {
+      for (const font of db) rqd[font] = has[font] = false;
+
+      return {
+        has,
+        rqd,
+        results: [],
+        search: {
+          width: FontConfig.FC_WIDTH_NORMAL,
+          weight: FontConfig.FC_WEIGHT_NORMAL,
+          slant: FontConfig.FC_SLANT_ROMAN,
+          lang: "",
+          coverage: ""
+        },
+        didTrySearch: false,
         family1: "",
         family2: "",
         family3: ""
       };
-
-      for (const font of db) rqd[font] = has[font] = false;
-
-      return Object.assign({has, rqd, results: [], search, didTrySearch: false}, families);
     },
     computed: {
       nhas() {
