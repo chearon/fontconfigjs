@@ -71,6 +71,18 @@ const Os2WidthToFcWidth = {
   9: FcConstants.FC_WIDTH_ULTRAEXPANDED
 };
 
+const Css3StretchToFcWidth = {
+  'ultra-condensed': FcConstants.FC_WIDTH_ULTRACONDENSED,
+  'extra-condensed': FcConstants.FC_WIDTH_EXTRACONDENSED,
+  'condensed': FcConstants.FC_WIDTH_CONDENSED,
+  'semi-condensed': FcConstants.FC_WIDTH_SEMICONDENSED,
+  'normal': FcConstants.FC_WIDTH_NORMAL,
+  'semi-expanded': FcConstants.FC_WIDTH_SEMIEXPANDED,
+  'expanded': FcConstants.FC_WIDTH_EXPANDED,
+  'extra-expanded': FcConstants.FC_WIDTH_EXTRAEXPANDED,
+  'ultra-expanded': FcConstants.FC_WIDTH_ULTRAEXPANDED
+};
+
 if (typeof TextEncoder === 'undefined') { //nodejs
   const {TextEncoder, TextDecoder} = require('util');
   global.TextEncoder = TextEncoder;
@@ -369,6 +381,9 @@ module.exports = function (wasm) {
           if (!decorative) decorative = containsDecorative(style);
         }
 
+        // TODO check the style name for slant, weight, width, if < 0
+        // https://gitlab.freedesktop.org/fontconfig/fontconfig/-/blob/93c93689f5da4ceaa675e006df63283e25b91d49/src/fcfreetype.c#L1926
+
         // Guarantee slant, final lowest priority values
         if (slant < 0) {
           slant = FcConstants.FC_SLANT_ROMAN;
@@ -425,15 +440,29 @@ module.exports = function (wasm) {
       }
 
       if ('weight' in fontspec) {
-        FcPatternObjectAddDouble(pat, FC_WEIGHT_OBJECT, fontspec.weight);
+        let weight = fontspec.weight;
+        if (typeof weight === 'string') {
+          const otweight = parseInt(weight, 10);
+          if (!Number.isNaN(otweight)) weight = FcWeightFromOpenTypeDouble(otweight);
+        }
+        if (Number.isFinite(weight)) {
+          FcPatternObjectAddDouble(pat, FC_WEIGHT_OBJECT, weight);
+        }
       }
 
       if ('width' in fontspec) {
-        FcPatternObjectAddInteger(pat, FC_WIDTH_OBJECT, fontspec.width);
+        let width = fontspec.width;
+        if (typeof width === 'string' && width in Css3StretchToFcWidth) {
+          width = Css3StretchToFcWidth[width];
+        }
+        FcPatternObjectAddInteger(pat, FC_WIDTH_OBJECT, width);
       }
 
       if ('slant' in fontspec) {
-        FcPatternObjectAddInteger(pat, FC_SLANT_OBJECT, fontspec.slant);
+        let slant = fontspec.slant;
+        if (slant === 'oblique') slant = FcConstants.FC_SLANT_OBLIQUE;
+        if (slant === 'italic') slant = FcConstants.FC_SLANT_ITALIC;
+        FcPatternObjectAddInteger(pat, FC_SLANT_OBJECT, slant);
       }
 
       if ('coverage' in fontspec) {

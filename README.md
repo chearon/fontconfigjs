@@ -38,18 +38,20 @@ Returns the best possible cascade list of fonts based on a description (with lat
 
 The pattern object passed to `FontConfig.prototype.sort` looks like:
 
-- `family` (string|array<string>) (required)
-- `weight` (number)
-- `width` (number)
-- `slant` (number)
-- `lang`  (string|array<string>)
-- `coverage` (array<number>)
+- `family` (string|string[]) (required)
+- `weight` (number|string) (a CSS2 weight like `'200'` or `FontConfig.FC_WEIGHT_EXTRALIGHT`)
+- `width` (number|string) (a CSS3 width like `'condensed'` or `FontConfig.FC_WIDTH_CONDENSED`)
+- `slant` (number|string) (a CSS2 slant like `'oblique'` or `FontConfig.FC_SLANT_OBLIQUE`)
+- `lang`  (string|string[])
+- `coverage` (number[])
 
 When the `family` is an array of more than one family, it is a prioritized list. If the first family isn't found, FontConfig tries the second family. If more than one is found, they will all appear in the results in prioritized order.
 
 For more details on other properties' individual values, continue below.
 
 #### Weights
+
+_Note you can also use CSS2 `font-weight` values as a string like `'300'`_
 
 - `FontConfig.FC_WEIGHT_THIN`
 - `FontConfig.FC_WEIGHT_EXTRALIGHT`
@@ -73,6 +75,8 @@ For more details on other properties' individual values, continue below.
 
 #### Widths
 
+_Note you can also use CSS3 `font-stretch` values as a string like `'condensed'`_
+
 - `FontConfig.FC_WIDTH_ULTRACONDENSED`
 - `FontConfig.FC_WIDTH_EXTRACONDENSED`
 - `FontConfig.FC_WIDTH_CONDENSED`
@@ -84,6 +88,8 @@ For more details on other properties' individual values, continue below.
 - `FontConfig.FC_WIDTH_ULTRAEXPANDED`
 
 #### Slants
+
+_Note you can also use CSS2 `font-style` values as a string like `'italic'`_
 
 - `FontConfig.FC_SLANT_ROMAN`
 - `FontConfig.FC_SLANT_ITALIC`
