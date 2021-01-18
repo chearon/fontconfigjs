@@ -50,9 +50,9 @@ declare class FontConfigClass {
 declare namespace FontConfigInit {
   type FontSpec = {
     family: string | string[],
-    weight?: number,
-    width?: number,
-    slant?: number,
+    weight?: number | string,
+    width?: number | string,
+    slant?: number | string,
     lang?: string | string[],
     coverage?: string[]
   }
