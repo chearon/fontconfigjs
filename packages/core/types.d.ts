@@ -1,5 +1,5 @@
 declare class CoverageClass {
-  done();
+  done(): void;
   has(c: string): boolean;
 }
 
