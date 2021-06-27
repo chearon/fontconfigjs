@@ -46604,8 +46604,20 @@
     8: $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_EXTRAEXPANDED,
     9: $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_ULTRAEXPANDED
   };
+  const $c8c163c85a2fe4122f49de2a1cd9c12c$var$Css3StretchToFcWidth = {
+    'ultra-condensed': $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_ULTRACONDENSED,
+    'extra-condensed': $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_EXTRACONDENSED,
+    'condensed': $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_CONDENSED,
+    'semi-condensed': $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_SEMICONDENSED,
+    'normal': $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_NORMAL,
+    'semi-expanded': $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_SEMIEXPANDED,
+    'expanded': $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_EXPANDED,
+    'extra-expanded': $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_EXTRAEXPANDED,
+    'ultra-expanded': $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_ULTRAEXPANDED
+  };
 
   if (typeof TextEncoder === 'undefined') {
+    //nodejs
     const {
       TextEncoder,
       TextDecoder
@@ -46640,8 +46652,7 @@
     if ($c8c163c85a2fe4122f49de2a1cd9c12c$var$strContainsIgnoreCase(s, 'bold')) return $eefa2b8b831d14eeeb495d913889d53$exports.FC_WEIGHT_BOLD;
     if ($c8c163c85a2fe4122f49de2a1cd9c12c$var$strContainsIgnoreCase(s, 'ultrablack')) return $eefa2b8b831d14eeeb495d913889d53$exports.FC_WEIGHT_EXTRABLACK;
     if ($c8c163c85a2fe4122f49de2a1cd9c12c$var$strContainsIgnoreCase(s, 'superblack')) return $eefa2b8b831d14eeeb495d913889d53$exports.FC_WEIGHT_EXTRABLACK;
-    if ($c8c163c85a2fe4122f49de2a1cd9c12c$var$strContainsIgnoreCase(s, 'extrablack')) return $eefa2b8b831d14eeeb495d913889d53$exports.FC_WEIGHT_EXTRABLACK; // TODO ultra?
-
+    if ($c8c163c85a2fe4122f49de2a1cd9c12c$var$strContainsIgnoreCase(s, 'extrablack')) return $eefa2b8b831d14eeeb495d913889d53$exports.FC_WEIGHT_EXTRABLACK;
     if ($c8c163c85a2fe4122f49de2a1cd9c12c$var$strContainsIgnoreCase(s, 'black')) return $eefa2b8b831d14eeeb495d913889d53$exports.FC_WEIGHT_BLACK;
     if ($c8c163c85a2fe4122f49de2a1cd9c12c$var$strContainsIgnoreCase(s, 'heavy')) return $eefa2b8b831d14eeeb495d913889d53$exports.FC_WEIGHT_HEAVY;
     return -1;
@@ -46658,8 +46669,7 @@
     if ($c8c163c85a2fe4122f49de2a1cd9c12c$var$strContainsIgnoreCase(s, 'ultraexpanded')) return $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_ULTRAEXPANDED;
     if ($c8c163c85a2fe4122f49de2a1cd9c12c$var$strContainsIgnoreCase(s, 'expanded')) return $eefa2b8b831d14eeeb495d913889d53$exports.FC_WIDTH_EXPANDED;
     return -1;
-  } // See FcContainsSlant in fcfreetype.c
-
+  }
 
   function $c8c163c85a2fe4122f49de2a1cd9c12c$var$containsSlant(s) {
     if ($c8c163c85a2fe4122f49de2a1cd9c12c$var$strContainsIgnoreCase(s, 'italic')) return $eefa2b8b831d14eeeb495d913889d53$exports.FC_SLANT_ITALIC;
@@ -46809,7 +46819,19 @@
         const jsfonts = raw.fonts ? raw.fonts : [raw];
 
         for (const [index, jsfont] of jsfonts.entries()) {
-          const fnt = FcPatternCreate(); // Family
+          const fnt = FcPatternCreate(); // Preferred
+
+          if ('preferredFamily' in jsfont.name.records) {
+            for (const [lang, text] of Object.entries(jsfont.name.records.preferredFamily)) {
+              const pt = smalloc(text.toString());
+              const pl = smalloc(lang.toString());
+              FcPatternObjectAddString(fnt, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_FAMILY_OBJECT, pt);
+              FcPatternObjectAddString(fnt, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_FAMILYLANG_OBJECT, pl);
+              free(pt);
+              free(pl);
+            }
+          } // Family
+
 
           if ('fontFamily' in jsfont.name.records) {
             for (const [lang, text] of Object.entries(jsfont.name.records.fontFamily)) {
@@ -46829,6 +46851,18 @@
               const pl = smalloc(lang.toString());
               FcPatternObjectAddString(fnt, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_FULLNAME_OBJECT, pt);
               FcPatternObjectAddString(fnt, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_FULLNAMELANG_OBJECT, pl);
+              free(pt);
+              free(pl);
+            }
+          } // Preferred style
+
+
+          if ('preferredSubFamily' in jsfont.name.records) {
+            for (const [lang, text] of Object.entries(jsfont.name.records.preferredSubFamily)) {
+              const pt = smalloc(text.toString());
+              const pl = smalloc(lang.toString());
+              FcPatternObjectAddString(fnt, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_STYLE_OBJECT, pt);
+              FcPatternObjectAddString(fnt, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_STYLELANG_OBJECT, pl);
               free(pt);
               free(pl);
             }
@@ -46883,7 +46917,9 @@
             if (width < 0) width = $c8c163c85a2fe4122f49de2a1cd9c12c$var$containsWidth(style);
             if (slant < 0) slant = $c8c163c85a2fe4122f49de2a1cd9c12c$var$containsSlant(style);
             if (!decorative) decorative = $c8c163c85a2fe4122f49de2a1cd9c12c$var$containsDecorative(style);
-          } // Guarantee slant, final lowest priority values
+          } // TODO check the style name for slant, weight, width, if < 0
+          // https://gitlab.freedesktop.org/fontconfig/fontconfig/-/blob/93c93689f5da4ceaa675e006df63283e25b91d49/src/fcfreetype.c#L1926
+          // Guarantee slant, final lowest priority values
 
 
           if (slant < 0) {
@@ -46929,24 +46965,46 @@
         const pat = FcPatternCreate();
         const matches = [];
 
-        if (typeof fontspec !== 'object' || typeof fontspec.family !== 'string') {
+        if (typeof fontspec !== 'object' || typeof fontspec.family !== 'string' && !Array.isArray(fontspec.family)) {
           throw new Error('Pass an object with at least {family: string}');
         }
 
-        const familyPtr = smalloc(fontspec.family);
-        FcPatternObjectAddString(pat, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_FAMILY_OBJECT, familyPtr);
-        free(familyPtr);
+        const familyNormalized = Array.isArray(fontspec.family) ? fontspec.family : [fontspec.family];
+
+        for (const family of familyNormalized) {
+          const familyPtr = smalloc(family);
+          FcPatternObjectAddString(pat, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_FAMILY_OBJECT, familyPtr);
+          free(familyPtr);
+        }
 
         if ('weight' in fontspec) {
-          FcPatternObjectAddDouble(pat, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_WEIGHT_OBJECT, fontspec.weight);
+          let weight = fontspec.weight;
+
+          if (typeof weight === 'string') {
+            const otweight = parseInt(weight, 10);
+            if (!Number.isNaN(otweight)) weight = FcWeightFromOpenTypeDouble(otweight);
+          }
+
+          if (Number.isFinite(weight)) {
+            FcPatternObjectAddDouble(pat, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_WEIGHT_OBJECT, weight);
+          }
         }
 
         if ('width' in fontspec) {
-          FcPatternObjectAddInteger(pat, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_WIDTH_OBJECT, fontspec.width);
+          let width = fontspec.width;
+
+          if (typeof width === 'string' && width in $c8c163c85a2fe4122f49de2a1cd9c12c$var$Css3StretchToFcWidth) {
+            width = $c8c163c85a2fe4122f49de2a1cd9c12c$var$Css3StretchToFcWidth[width];
+          }
+
+          FcPatternObjectAddInteger(pat, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_WIDTH_OBJECT, width);
         }
 
         if ('slant' in fontspec) {
-          FcPatternObjectAddInteger(pat, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_SLANT_OBJECT, fontspec.slant);
+          let slant = fontspec.slant;
+          if (slant === 'oblique') slant = $eefa2b8b831d14eeeb495d913889d53$exports.FC_SLANT_OBLIQUE;
+          if (slant === 'italic') slant = $eefa2b8b831d14eeeb495d913889d53$exports.FC_SLANT_ITALIC;
+          FcPatternObjectAddInteger(pat, $c8c163c85a2fe4122f49de2a1cd9c12c$var$FC_SLANT_OBJECT, slant);
         }
 
         if ('coverage' in fontspec) {
@@ -47269,4 +47327,4 @@
     });
   });
 })();
-//# sourceMappingURL=demo.e800fe03.js.map
+//# sourceMappingURL=demo.ce37ebe9.js.map
