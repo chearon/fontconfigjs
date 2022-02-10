@@ -8,7 +8,7 @@
     "src/*.js",
     "types.d.ts"
   ],
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "In-memory version of FontConfig in JS/WASM (no native dependencies)",
   "main": "src/node.js",
   "browser": "src/browser.js",
