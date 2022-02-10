@@ -3,8 +3,27 @@ declare class CoverageClass {
   has(c: string): boolean;
 }
 
+declare class FontConfigCssMatchClass {
+  file: string;
+  index: number;
+  family: string;
+  weight: number;
+  width: number;
+  slant: number;
+}
+
+declare class FontConfigMatchClass {
+  file: string;
+  index: number;
+  family: string;
+  weight: string;
+  width: string;
+  slant: string;
+  toCssMatch(): FontConfigCssMatchClass;
+}
+
 declare class CascadeClass {
-  public matches: {file: string, index: number}[];
+  public matches: FontConfigMatchClass[];
   public coverage: CoverageClass;
 }
 
@@ -64,6 +83,10 @@ declare namespace FontConfigInit {
   type FontConfig = FontConfigClass;
 
   type Coverage = CoverageClass;
+
+  type FontConfigMatch = FontConfigMatchClass;
+
+  type FontConfigCssMatch = FontConfigCssMatchClass;
 
   type Cascade = CascadeClass;
 }

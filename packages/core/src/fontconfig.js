@@ -83,6 +83,18 @@ const Css3StretchToFcWidth = {
   'ultra-expanded': FcConstants.FC_WIDTH_ULTRAEXPANDED
 };
 
+const FcWidthToCss3Stretch = {
+  [FcConstants.FC_WIDTH_ULTRACONDENSED]: 'ultra-condensed',
+  [FcConstants.FC_WIDTH_EXTRACONDENSED]: 'extra-condensed',
+  [FcConstants.FC_WIDTH_CONDENSED]: 'condensed',
+  [FcConstants.FC_WIDTH_SEMICONDENSED]: 'semi-condensed',
+  [FcConstants.FC_WIDTH_NORMAL]: 'normal',
+  [FcConstants.FC_WIDTH_SEMIEXPANDED]: 'semi-expanded',
+  [FcConstants.FC_WIDTH_EXPANDED]: 'expanded',
+  [FcConstants.FC_WIDTH_EXTRAEXPANDED]: 'extra-expanded',
+  [FcConstants.FC_WIDTH_ULTRAEXPANDED]: 'ultra-expanded'
+};
+
 if (typeof TextEncoder === 'undefined') { //nodejs
   const {TextEncoder, TextDecoder} = require('util');
   global.TextEncoder = TextEncoder;
@@ -173,6 +185,7 @@ module.exports = function (wasm) {
     FcPatternObjectAddCharSet,
     FcPatternObjectAddLangSet,
     FcPatternObjectAddDouble,
+    FcPatternObjectGetDouble,
     FcPatternObjectAddBool,
     FcPatternObjectAddInteger,
     FcPatternObjectGetInteger,
@@ -191,6 +204,7 @@ module.exports = function (wasm) {
     FcLangSetDestroy,
     FcFreeTypeLangSet, // TODO naming here... it doesn't use FT at all
     FcWeightFromOpenTypeDouble,
+    FcWeightToOpenTypeDouble,
     malloc,
     free,
     memory
@@ -198,8 +212,9 @@ module.exports = function (wasm) {
 
   FcInitDebug();
 
-  // A 'register' re-used often for pointer sharing
+  // 'registers' re-used often for pointer sharing
   const u32p = malloc(4);
+  const f64p = malloc(8);
 
   function buf() {
     return memory.buffer;
@@ -227,6 +242,37 @@ module.exports = function (wasm) {
     has(c) {
       if (this.isDone) throw new Error('done() was called');
       return FcCharSetHasChar(this.cset, c);
+    }
+  }
+
+  class CssMatch {
+    constructor(file, index, family, weight, width, slant) {
+      this.file = file;
+      this.index = index;
+      this.family = family;
+      this.weight = weight;
+      this.width = width;
+      this.slant = slant;
+    }
+  }
+
+  class Match {
+    constructor(file, index, family, weight, width, slant) {
+      this.file = file;
+      this.index = index;
+      this.family = family;
+      this.weight = weight;
+      this.width = width;
+      this.slant = slant;
+    }
+
+    toCssMatch() {
+      const weight = String(FcWeightToOpenTypeDouble(this.weight));
+      const width = FcWidthToCss3Stretch[this.width];
+      let slant = 'normal';
+      if (this.slant === FcConstants.FC_SLANT_OBLIQUE) slant = 'oblique';
+      if (this.slant === FcConstants.FC_SLANT_ITALIC) slant = 'italic';
+      return new CssMatch(this.file, this.index, this.family, weight, width, slant);
     }
   }
 
@@ -512,7 +558,31 @@ module.exports = function (wasm) {
 
           if (FcPatternObjectGetInteger(fontsPtr, FC_INDEX_OBJECT, 0, u32p) === FcResultMatch) {
             const index = new Uint32Array(buf(), u32p, 1)[0];
-            matches.push({file, index});
+
+            let family = '';
+            if (FcPatternObjectGetString(fontsPtr, FC_FAMILY_OBJECT, 0, u32p) === FcResultMatch) {
+              const familyPtr = new Uint32Array(buf(), u32p, 1)[0];
+              const unsized = new Uint8Array(buf(), familyPtr);
+              const utf8 = new Uint8Array(buf(), familyPtr, unsized.indexOf(0));
+              family = new TextDecoder().decode(utf8);
+            }
+
+            let weight = FcConstants.FC_WEIGHT_REGULAR;
+            if (FcPatternObjectGetDouble(fontsPtr, FC_WEIGHT_OBJECT, 0, f64p) === FcResultMatch) {
+              weight = new Float64Array(buf(), f64p, 1)[0];
+            }
+
+            let width = FcConstants.FC_WIDTH_NORMAL;
+            if (FcPatternObjectGetDouble(fontsPtr, FC_WIDTH_OBJECT, 0, f64p) === FcResultMatch) {
+              width = new Float64Array(buf(), f64p, 1)[0];
+            }
+
+            let slant = FcConstants.FC_SLANT_ROMAN;
+            if (FcPatternObjectGetInteger(fontsPtr, FC_SLANT_OBJECT, 0, u32p) === FcResultMatch) {
+              slant = new Uint32Array(buf(), u32p, 1)[0];
+            }
+
+            matches.push(new Match(file, index, family, weight, width, slant));
           } else {
             throw new Error('Font without an index?');
           }
