@@ -7,18 +7,18 @@ declare class FontConfigCssMatchClass {
   file: string;
   index: number;
   family: string;
-  weight: number;
-  width: number;
-  slant: number;
+  weight: string;
+  width: string;
+  slant: string;
 }
 
 declare class FontConfigMatchClass {
   file: string;
   index: number;
   family: string;
-  weight: string;
-  width: string;
-  slant: string;
+  weight: number;
+  width: number;
+  slant: number;
   toCssMatch(): FontConfigCssMatchClass;
 }
 
