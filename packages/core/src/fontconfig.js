@@ -410,7 +410,7 @@ module.exports = function (wasm) {
         FcPatternObjectAddString(fnt, FC_FILE_OBJECT, sfilename);
         FcPatternObjectAddDouble(fnt, FC_WEIGHT_OBJECT, weight);
         FcPatternObjectAddDouble(fnt, FC_WIDTH_OBJECT, width);
-        FcPatternObjectAddDouble(fnt, FC_SLANT_OBJECT, slant);
+        FcPatternObjectAddInteger(fnt, FC_SLANT_OBJECT, slant);
         FcPatternObjectAddBool(fnt, FC_DECORATIVE_OBJECT, decorative);
         FcPatternObjectAddInteger(fnt, FC_INDEX_OBJECT, index);
 
@@ -455,7 +455,7 @@ module.exports = function (wasm) {
         if (typeof width === 'string' && width in Css3StretchToFcWidth) {
           width = Css3StretchToFcWidth[width];
         }
-        FcPatternObjectAddInteger(pat, FC_WIDTH_OBJECT, width);
+        FcPatternObjectAddDouble(pat, FC_WIDTH_OBJECT, width);
       }
 
       if ('slant' in fontspec) {
