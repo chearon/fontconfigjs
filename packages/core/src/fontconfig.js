@@ -95,12 +95,6 @@ const FcWidthToCss3Stretch = {
   [FcConstants.FC_WIDTH_ULTRAEXPANDED]: 'ultra-expanded'
 };
 
-if (typeof TextEncoder === 'undefined') { //nodejs
-  const {TextEncoder, TextDecoder} = require('util');
-  global.TextEncoder = TextEncoder;
-  global.TextDecoder = TextDecoder;
-}
-
 // See FcStrContainsIgnoreCase in fcstr.c
 function strContainsIgnoreCase(s1, s2) {
   return s1.replace(/ /g, '').toLowerCase().indexOf(s2) > -1;
