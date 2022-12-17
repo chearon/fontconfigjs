@@ -184,6 +184,7 @@ module.exports = function (wasm) {
     FcPatternObjectAddInteger,
     FcPatternObjectGetInteger,
     FcConfigSubstitute,
+    FcConfigGetFonts,
     FcDefaultSubstitute,
     FcFontSort,
     FcFontSetDestroy,
@@ -221,6 +222,56 @@ module.exports = function (wasm) {
     for (let i = 0; i < utf8.length; ++i) a[i] = utf8[i];
     a[utf8.length] = 0;
     return ptr;
+  }
+
+  function fcFontSetToMatches(set) {
+    const matches = [];
+    const [nfont,, fontsPtrPtr] = new Uint32Array(buf(), set, 3);
+
+    for (let i = 0; i < nfont; ++i) {
+      const fontsPtr = new Uint32Array(buf(), fontsPtrPtr + i * 4, 1)[0];
+      if (FcPatternObjectGetString(fontsPtr, FC_FILE_OBJECT, 0, u32p) === FcResultMatch) {
+        const filePtr = new Uint32Array(buf(), u32p, 1)[0];
+        const unsized = new Uint8Array(buf(), filePtr);
+        const utf8 = new Uint8Array(buf(), filePtr, unsized.indexOf(0));
+        const file = new TextDecoder().decode(utf8);
+
+        if (FcPatternObjectGetInteger(fontsPtr, FC_INDEX_OBJECT, 0, u32p) === FcResultMatch) {
+          const index = new Uint32Array(buf(), u32p, 1)[0];
+
+          let family = '';
+          if (FcPatternObjectGetString(fontsPtr, FC_FAMILY_OBJECT, 0, u32p) === FcResultMatch) {
+            const familyPtr = new Uint32Array(buf(), u32p, 1)[0];
+            const unsized = new Uint8Array(buf(), familyPtr);
+            const utf8 = new Uint8Array(buf(), familyPtr, unsized.indexOf(0));
+            family = new TextDecoder().decode(utf8);
+          }
+
+          let weight = FcConstants.FC_WEIGHT_REGULAR;
+          if (FcPatternObjectGetDouble(fontsPtr, FC_WEIGHT_OBJECT, 0, f64p) === FcResultMatch) {
+            weight = new Float64Array(buf(), f64p, 1)[0];
+          }
+
+          let width = FcConstants.FC_WIDTH_NORMAL;
+          if (FcPatternObjectGetDouble(fontsPtr, FC_WIDTH_OBJECT, 0, f64p) === FcResultMatch) {
+            width = new Float64Array(buf(), f64p, 1)[0];
+          }
+
+          let slant = FcConstants.FC_SLANT_ROMAN;
+          if (FcPatternObjectGetInteger(fontsPtr, FC_SLANT_OBJECT, 0, u32p) === FcResultMatch) {
+            slant = new Uint32Array(buf(), u32p, 1)[0];
+          }
+
+          matches.push(new Match(file, index, family, weight, width, slant));
+        } else {
+          throw new Error('Font without an index?');
+        }
+      } else {
+        throw new Error('Font without a filename?');
+      }
+    }
+
+    return matches;
   }
 
   class Coverage {
@@ -463,9 +514,13 @@ module.exports = function (wasm) {
       free(sfilename);
     }
 
+    list() {
+      const set = FcConfigGetFonts(this._cfg, 1);
+      return fcFontSetToMatches(set);
+    }
+
     sort(fontspec, options) {
       const pat = FcPatternCreate();
-      const matches = [];
 
       if (typeof fontspec !== 'object' || typeof fontspec.family !== 'string' && !Array.isArray(fontspec.family)) {
         throw new Error('Pass an object with at least {family: string}');
@@ -540,50 +595,7 @@ module.exports = function (wasm) {
 
       if (result !== FcResultMatch) throw new Error('FcResult: ' + result);
 
-      const [nfont,, fontsPtrPtr] = new Uint32Array(buf(), set, 3);
-
-      for (let i = 0; i < nfont; ++i) {
-        const fontsPtr = new Uint32Array(buf(), fontsPtrPtr + i * 4, 1)[0];
-        if (FcPatternObjectGetString(fontsPtr, FC_FILE_OBJECT, 0, u32p) === FcResultMatch) {
-          const filePtr = new Uint32Array(buf(), u32p, 1)[0];
-          const unsized = new Uint8Array(buf(), filePtr);
-          const utf8 = new Uint8Array(buf(), filePtr, unsized.indexOf(0));
-          const file = new TextDecoder().decode(utf8);
-
-          if (FcPatternObjectGetInteger(fontsPtr, FC_INDEX_OBJECT, 0, u32p) === FcResultMatch) {
-            const index = new Uint32Array(buf(), u32p, 1)[0];
-
-            let family = '';
-            if (FcPatternObjectGetString(fontsPtr, FC_FAMILY_OBJECT, 0, u32p) === FcResultMatch) {
-              const familyPtr = new Uint32Array(buf(), u32p, 1)[0];
-              const unsized = new Uint8Array(buf(), familyPtr);
-              const utf8 = new Uint8Array(buf(), familyPtr, unsized.indexOf(0));
-              family = new TextDecoder().decode(utf8);
-            }
-
-            let weight = FcConstants.FC_WEIGHT_REGULAR;
-            if (FcPatternObjectGetDouble(fontsPtr, FC_WEIGHT_OBJECT, 0, f64p) === FcResultMatch) {
-              weight = new Float64Array(buf(), f64p, 1)[0];
-            }
-
-            let width = FcConstants.FC_WIDTH_NORMAL;
-            if (FcPatternObjectGetDouble(fontsPtr, FC_WIDTH_OBJECT, 0, f64p) === FcResultMatch) {
-              width = new Float64Array(buf(), f64p, 1)[0];
-            }
-
-            let slant = FcConstants.FC_SLANT_ROMAN;
-            if (FcPatternObjectGetInteger(fontsPtr, FC_SLANT_OBJECT, 0, u32p) === FcResultMatch) {
-              slant = new Uint32Array(buf(), u32p, 1)[0];
-            }
-
-            matches.push(new Match(file, index, family, weight, width, slant));
-          } else {
-            throw new Error('Font without an index?');
-          }
-        } else {
-          throw new Error('Font without a filename?');
-        }
-      }
+      const matches = fcFontSetToMatches(set);
 
       const csp = cspPtr ? new Uint32Array(buf(), cspPtr, 1)[0] : 0;
       if (cspPtr) free(cspPtr);

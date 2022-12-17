@@ -63,6 +63,7 @@ declare class FontConfigClass {
   static FC_SLANT_OBLIQUE: number;
 
   addFont(filename: string): Promise<undefined>;
+  list(): FontConfigMatchClass[];
   sort(fontspec: FontConfigInit.FontSpec, options?: FontConfigInit.Options): CascadeClass;
 }
 
