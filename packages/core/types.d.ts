@@ -9,7 +9,7 @@ declare class FontConfigCssMatchClass {
   family: string;
   weight: string;
   width: string;
-  slant: string;
+  style: string;
 }
 
 declare class FontConfigMatchClass {
@@ -73,6 +73,8 @@ declare namespace FontConfigInit {
     weight?: number | string,
     width?: number | string,
     slant?: number | string,
+    /** alias for slant */
+    style?: number | string,
     lang?: string | string[],
     coverage?: string[]
   }

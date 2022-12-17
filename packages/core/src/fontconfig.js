@@ -291,13 +291,13 @@ module.exports = function (wasm) {
   }
 
   class CssMatch {
-    constructor(file, index, family, weight, width, slant) {
+    constructor(file, index, family, weight, width, style) {
       this.file = file;
       this.index = index;
       this.family = family;
       this.weight = weight;
       this.width = width;
-      this.slant = slant;
+      this.style = style;
     }
   }
 
@@ -314,10 +314,10 @@ module.exports = function (wasm) {
     toCssMatch() {
       const weight = String(FcWeightToOpenTypeDouble(this.weight));
       const width = FcWidthToCss3Stretch[this.width];
-      let slant = 'normal';
-      if (this.slant === FcConstants.FC_SLANT_OBLIQUE) slant = 'oblique';
-      if (this.slant === FcConstants.FC_SLANT_ITALIC) slant = 'italic';
-      return new CssMatch(this.file, this.index, this.family, weight, width, slant);
+      let style = 'normal';
+      if (this.slant === FcConstants.FC_SLANT_OBLIQUE) style = 'oblique';
+      if (this.slant === FcConstants.FC_SLANT_ITALIC) style = 'italic';
+      return new CssMatch(this.file, this.index, this.family, weight, width, style);
     }
   }
 
@@ -553,8 +553,8 @@ module.exports = function (wasm) {
         FcPatternObjectAddDouble(pat, FC_WIDTH_OBJECT, width);
       }
 
-      if ('slant' in fontspec) {
-        let slant = fontspec.slant;
+      if ('slant' in fontspec || 'style' in fontspec) {
+        let slant = fontspec.slant || fontspec.style;
         if (slant === 'normal') slant = FcConstants.FC_SLANT_ROMAN;
         if (slant === 'oblique') slant = FcConstants.FC_SLANT_OBLIQUE;
         if (slant === 'italic') slant = FcConstants.FC_SLANT_ITALIC;
