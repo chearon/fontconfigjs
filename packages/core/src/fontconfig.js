@@ -555,6 +555,7 @@ module.exports = function (wasm) {
 
       if ('slant' in fontspec) {
         let slant = fontspec.slant;
+        if (slant === 'normal') slant = FcConstants.FC_SLANT_ROMAN;
         if (slant === 'oblique') slant = FcConstants.FC_SLANT_OBLIQUE;
         if (slant === 'italic') slant = FcConstants.FC_SLANT_ITALIC;
         FcPatternObjectAddInteger(pat, FC_SLANT_OBJECT, slant);
