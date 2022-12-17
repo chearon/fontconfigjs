@@ -34,4 +34,4 @@ FcConstants.FC_WIDTH_EXPANDED       = 125;
 FcConstants.FC_WIDTH_EXTRAEXPANDED  = 150;
 FcConstants.FC_WIDTH_ULTRAEXPANDED  = 200;
 
-module.exports = FcConstants;
+export default FcConstants;

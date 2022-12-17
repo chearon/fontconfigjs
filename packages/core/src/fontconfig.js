@@ -1,5 +1,5 @@
-const fontkit = require('fontkit');
-const FcConstants = require('./constants');
+import {create as createFont} from 'fontkit';
+import FcConstants from './constants.js';
 
 const FcResultMatch = 0;
 const FcResultNoMatch = 1;
@@ -170,7 +170,7 @@ function getExclusiveLang([codePageRange1]) {
   if (codePageRange1 & 1 << 20 === bits17to20) return 'zh-tw';
 }
 
-module.exports = function (wasm) {
+export default function (wasm) {
   const {
     FcConfigCreate,
     FcPatternCreate,
@@ -343,7 +343,7 @@ module.exports = function (wasm) {
 
         try {
           const buf = await this.loadBuffer(filename);
-          raw = fontkit.create(buf);
+          raw = createFont(buf);
         } catch (e) {
           free(sfilename);
           throw e;
@@ -359,7 +359,7 @@ module.exports = function (wasm) {
             reader.readAsArrayBuffer(filename);
           });
 
-          raw = fontkit.create(Buffer.from(arrayBuffer));
+          raw = createFont(Buffer.from(arrayBuffer));
         } catch (e) {
           free(sfilename);
           throw e;

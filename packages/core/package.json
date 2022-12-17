@@ -3,6 +3,7 @@
     "fontkit": "^2.0.2"
   },
   "name": "fontconfig",
+  "type": "module",
   "files": [
     "lib.wasm",
     "src/*.js",

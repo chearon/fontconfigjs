@@ -1,5 +1,6 @@
 {
   "name": "fontconfig-js-demo",
+  "type": "module",
   "version": "1.0.0",
   "source": "src/index.html",
   "repository": "git@github.com:chearon/fontconfigjs.git",

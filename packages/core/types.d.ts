@@ -1,9 +1,9 @@
-declare class CoverageClass {
+export class Coverage {
   done(): void;
   has(c: string): boolean;
 }
 
-declare class FontConfigCssMatchClass {
+export class FontConfigCssMatch {
   file: string;
   index: number;
   family: string;
@@ -12,22 +12,37 @@ declare class FontConfigCssMatchClass {
   style: string;
 }
 
-declare class FontConfigMatchClass {
+export class FontConfigMatch {
   file: string;
   index: number;
   family: string;
   weight: number;
   width: number;
   slant: number;
-  toCssMatch(): FontConfigCssMatchClass;
+  toCssMatch(): FontConfigCssMatch
 }
 
-declare class CascadeClass {
-  public matches: FontConfigMatchClass[];
-  public coverage: CoverageClass;
+export class Cascade {
+  public matches: FontConfigMatch[];
+  public coverage: Coverage;
 }
 
-declare class FontConfigClass {
+export type SortOptions = {
+  coverage?: number[]
+}
+
+export type FontSpec = {
+  family: string | string[],
+  weight?: number | string,
+  width?: number | string,
+  slant?: number | string,
+  /** alias for slant */
+  style?: number | string,
+  lang?: string | string[],
+  coverage?: string[]
+}
+
+declare class FontConfig {
   static FC_WEIGHT_THIN: number;
   static FC_WEIGHT_EXTRALIGHT: number;
   static FC_WEIGHT_ULTRALIGHT: number;
@@ -63,37 +78,10 @@ declare class FontConfigClass {
   static FC_SLANT_OBLIQUE: number;
 
   addFont(filename: string): Promise<undefined>;
-  list(): FontConfigMatchClass[];
-  sort(fontspec: FontConfigInit.FontSpec, options?: FontConfigInit.Options): CascadeClass;
+  list(): FontConfigMatch[];
+  sort(fontspec: FontSpec, options?: SortOptions): Cascade;
 }
 
-declare namespace FontConfigInit {
-  type FontSpec = {
-    family: string | string[],
-    weight?: number | string,
-    width?: number | string,
-    slant?: number | string,
-    /** alias for slant */
-    style?: number | string,
-    lang?: string | string[],
-    coverage?: string[]
-  }
+export type {FontConfig};
 
-  type Options = {
-    coverage?: number[]
-  }
-
-  type FontConfig = FontConfigClass;
-
-  type Coverage = CoverageClass;
-
-  type FontConfigMatch = FontConfigMatchClass;
-
-  type FontConfigCssMatch = FontConfigCssMatchClass;
-
-  type Cascade = CascadeClass;
-}
-
-declare const FontConfigInit: Promise<typeof FontConfigClass>;
-
-export = FontConfigInit;
+export default function (wasmPath?: string): Promise<typeof FontConfig>;

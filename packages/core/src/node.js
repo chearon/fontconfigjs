@@ -1,8 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const fontkit = require('fontkit');
-const FontConfig = require('./fontconfig');
+import FontConfigCtor from './fontconfig.js';
+import fs from 'fs';
 
+const libpath = new URL('../lib.wasm', import.meta.url);
 const imports = {};
 
 // Provide WASI runtime if node has the arguments
@@ -14,23 +13,21 @@ const imports = {};
 // (this mode is for the browser).
 let wasi;
 try {
-	const {WASI} = require('wasi');
-	wasi = new WASI({args: process.argv, env: process.env});
-	imports.wasi_snapshot_preview1 = wasi.wasiImport;
-} catch (e) {
-	console.log('Not using WASI');
-}
+  const WASI = await import('wasi');
+  wasi = new WASI({args: process.argv, env: process.env});
+  imports.wasi_snapshot_preview1 = wasi.wasiImport;
+} catch (e) { /* not using WASI */ }
 
-const libpath = path.join(__dirname, '..', 'lib.wasm');
-module.exports = WebAssembly.instantiate(fs.readFileSync(libpath), imports)
-  .then(wasm => {
-    if (wasi) wasi.initialize(wasm.instance);
-		return new FontConfig(wasm);
-  })
-  .then(FontConfig => {
-    return class NodeFontConfig extends FontConfig {
-      async loadBuffer(filename) {
-        return fs.readFileSync(filename);
-      }
+const wasm = await WebAssembly.instantiate(fs.readFileSync(libpath), imports);
+
+if (wasi) wasi.initialize(wasm.instance);
+
+const FontConfig = FontConfigCtor(wasm);
+
+export default async function () {
+  return class NodeFontConfig extends FontConfig {
+    async loadBuffer(filename) {
+      return fs.readFileSync(filename);
     }
-  });
+  }
+}
