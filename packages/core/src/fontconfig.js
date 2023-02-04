@@ -170,7 +170,7 @@ function getExclusiveLang([codePageRange1]) {
   if (codePageRange1 & 1 << 20 === bits17to20) return 'zh-tw';
 }
 
-export default function (wasm) {
+export default function createFontConfig(wasm) {
   const {
     FcConfigCreate,
     FcPatternCreate,
@@ -334,38 +334,24 @@ export default function (wasm) {
       this._cfg = FcConfigCreate();
     }
 
-    async addFont(filename) {
+    async addFont(buffer, filename) {
       let raw, sfilename;
 
-      // Will throw if the file is invalid/unsupported/doesn't exist
-      if (typeof filename === "string") {
-        sfilename = smalloc(filename);
+      if (!(buffer instanceof Uint8Array)) {
+        throw new Error('Buffer is required and must be a Uint8Array');
+      }
 
-        try {
-          const buf = await this.loadBuffer(filename);
-          raw = createFont(buf);
-        } catch (e) {
-          free(sfilename);
-          throw e;
-        }
-      } else if (typeof File === "function" && filename instanceof File) {
-        sfilename = smalloc(filename.name);
+      if (typeof filename !== 'string') {
+        throw new Error('Filename is required');
+      }
 
-        try {
-          const arrayBuffer = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = e => reject(e);
-            reader.readAsArrayBuffer(filename);
-          });
+      sfilename = smalloc(filename);
 
-          raw = createFont(Buffer.from(arrayBuffer));
-        } catch (e) {
-          free(sfilename);
-          throw e;
-        }
-      } else {
-        throw new Error("Unsupported argument type");
+      try {
+        raw = createFont(buffer);
+      } catch (e) {
+        free(sfilename);
+        throw e;
       }
 
       const jsfonts = raw.fonts ? raw.fonts : [raw];

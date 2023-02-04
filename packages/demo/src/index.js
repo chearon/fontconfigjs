@@ -1,13 +1,7 @@
 import Vue from 'vue/dist/vue.esm.js';
 import FontConfigInit from 'fontconfig';
 
-const FontConfigBase = await FontConfigInit('lib.wasm');
-
-class FontConfig extends FontConfigBase {
-  async loadBuffer(filename) {
-    return Buffer.from(await fetch(`fonts/${filename}`).then(res => res.arrayBuffer()));
-  }
-}
+const FontConfig = await FontConfigInit('lib.wasm');
 
 const cfg = new FontConfig();
 
@@ -188,7 +182,8 @@ const vm = new Vue({
   methods: {
     async addFont(filename) {
       this.rqd[filename] = true;
-      await cfg.addFont(filename);
+      const arrayBuffer = await fetch(`fonts/${filename}`).then(res => res.arrayBuffer());
+      await cfg.addFont(new Uint8Array(arrayBuffer), filename);
       this.has[filename] = true;
     },
     async onInput(font) {
@@ -235,9 +230,17 @@ document.addEventListener('dragover', e => {
 });
 
 document.addEventListener('drop', async e => {
+  e.preventDefault();
   for (const file of e.dataTransfer.files) {
     try {
-      await cfg.addFont(file);
+      const arrayBuffer = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = e => reject(e);
+        reader.readAsArrayBuffer(file);
+      });
+
+      cfg.addFont(new Uint8Array(arrayBuffer), file.name);
       db.unshift(file.name);
       Vue.set(vm.rqd, file.name, true);
       Vue.set(vm.has, file.name, true);

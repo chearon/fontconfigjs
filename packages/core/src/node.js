@@ -1,4 +1,4 @@
-import FontConfigCtor from './fontconfig.js';
+import createFontConfig from './fontconfig.js';
 import fs from 'fs';
 
 const libpath = new URL('../lib.wasm', import.meta.url);
@@ -22,12 +22,6 @@ const wasm = await WebAssembly.instantiate(fs.readFileSync(libpath), imports);
 
 if (wasi) wasi.initialize(wasm.instance);
 
-const FontConfig = FontConfigCtor(wasm);
-
 export default async function () {
-  return class NodeFontConfig extends FontConfig {
-    async loadBuffer(filename) {
-      return fs.readFileSync(filename);
-    }
-  }
+  return createFontConfig(wasm);
 }

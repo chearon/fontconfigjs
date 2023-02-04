@@ -5,12 +5,21 @@ This is essentially a stripped-down version of FontConfig compiled to WebAssembl
 ## How?
 
 ```javascript
-const FontConfig = await require('fontconfig');
+import FontConfigInit from 'fontconfig';
+import fs from 'fs';
+
+const FontConfig = await FontConfigInit(/* wasm URL if you're in the browser */);
 const cfg = new FontConfig();
 
-cfg.addFont('/Library/Fonts/Comic Sans MS.ttf');
-cfg.addFont('/Library/Fonts/Futura.ttc');
-cfg.addFont('/Library/Fonts/GillSans.ttc');
+const fonts = [
+  '/Library/Fonts/Comic Sans MS.ttf',
+  '/Library/Fonts/Futura.ttc',
+  '/Library/Fonts/GillSans.ttc'
+];
+
+for (const filename of fonts) {
+  cfg.addFont(new Uint8Array(fs.readFileSync(filename)), filename);
+}
 
 cfg.sort({
   family: 'Gill Sans',

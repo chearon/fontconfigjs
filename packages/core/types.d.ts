@@ -77,7 +77,7 @@ declare class FontConfig {
   static FC_SLANT_ITALIC: number;
   static FC_SLANT_OBLIQUE: number;
 
-  addFont(filename: string): Promise<undefined>;
+  addFont(buffer: Uint8Array, filename: string): void;
   list(): FontConfigMatch[];
   sort(fontspec: FontSpec, options?: SortOptions): Cascade;
 }
