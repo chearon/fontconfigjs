@@ -9,7 +9,7 @@
     "src/*.js",
     "types.d.ts"
   ],
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "In-memory version of FontConfig in JS/WASM (no native dependencies)",
   "main": "src/node.js",
   "browser": "src/browser.js",
